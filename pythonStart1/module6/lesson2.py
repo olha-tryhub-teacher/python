@@ -13,7 +13,7 @@ mw.fill(back)
 
 #кольори
 BLACK = (0,0,0)
-LIGHT_BLUE = (255,129,157)
+COLOR_QA = (255,129,157)
 
 
 class TextArea():
@@ -45,7 +45,7 @@ class TextArea():
 
 
 #створення карток
-quest_card = TextArea(120,100,300,70, LIGHT_BLUE)
+quest_card = TextArea(120,100,300,70, COLOR_QA)
 quest_card.add_text('Питання')
 quest_card.add_text('Що вивчаєш в Логіці?')
 quest_card.add_text('Якою мовою говорять у Франції?')
@@ -53,7 +53,7 @@ quest_card.add_text('Що росте на яблуні?')
 quest_card.add_text('Що падає з неба під час дощу?')
 quest_card.add_text('Що їдять на вечерю?')
 quest_card.set_text(0,75)
-ans_card = TextArea(120,240,290,70, LIGHT_BLUE)
+ans_card = TextArea(120,240,290,70, COLOR_QA)
 ans_card.add_text('Відповідь')
 ans_card.add_text('Python')
 ans_card.add_text('Французька')
