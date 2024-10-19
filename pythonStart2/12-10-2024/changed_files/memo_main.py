@@ -22,21 +22,24 @@ radio_list = [rbtn_1, rbtn_2, rbtn_3,
 frm_card = 0  # тут буде пов'язуватись питання з формою тесту
 timer = QTimer()  # таймер для можливості "заснути" на деякий час і прокинутися
 win_card = QWidget()  # вікно картки
+win_card.setStyleSheet(QSS)
+win_card.setObjectName("cardWindow")
 win_main = QWidget()  # вікно редагування питань, основне в програмі
-
+win_main.setObjectName("mainWindow")
+win_main.setStyleSheet(QSS)
 
 ######################################             Тестові дані:         #############################################
 def testlist():
-    frm = Form('Як називається моб в майнкрафті, який вибухає?', 'кріпер',
-               'золоте яблуко', 'стів', 'свиня')
+    frm = Form('яка компанія є виробником автомобілів BMW?', 'BMW AG',
+               'Volkswagen', 'Mercedes-Benz', 'Audi')
     questions_listmodel.form_list.append(frm)
 
-    frm = Form('Який інструмент потрібен для збору обсидіану?', 'алмазне кайло',
-               'залізне кайло', 'дерев’яне кайло',
-               'золоте кайло')
+    frm = Form('В якому році була засновлена компанія BMW?', '1916',
+               '1923', '1905',
+               '1945')
     questions_listmodel.form_list.append(frm)
 
-    frm = Form('Який ресурс можна отримати з курки у Minecraft?', 'перо',
+    frm = Form('Яка з цих моделей є електричним автомобілем BMW?', '',
                'шкіра', 'залізо', 'пшениця')
     questions_listmodel.form_list.append(frm)
 
