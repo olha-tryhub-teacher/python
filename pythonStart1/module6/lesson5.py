@@ -134,7 +134,7 @@ while True: # створюємо ігровий цикл
 
     if points >= 5:
         win = Label(0, 0, 500, 500, LIGHT_GREEN)
-        win.set_text("Ты переміг!!!", 60, DARK_BLUE)
+        win.set_text("Ти переміг!!!", 60, DARK_BLUE)
         win.draw(140, 180)
         resul_time = Label(90, 230, 250, 250, LIGHT_GREEN)
         resul_time.set_text("Час проходження: " + str (int(new_time - start_time)) + " секунд", 40, DARK_BLUE)
