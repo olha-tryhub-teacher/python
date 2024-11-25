@@ -7,6 +7,13 @@ from sklearn.metrics import confusion_matrix, accuracy_score  # Імпортує
 df = pd.read_csv("train.csv")
 print(df.info())
 
+# Аналіз кількості покупок залежно від статі
+gender_group = df.groupby("gender")["result"].mean()
+print(gender_group)
+
+# Аналіз залежності від сімейного стану
+relation_group = df.groupby("relation")["result"].mean()
+print(relation_group)
 
 # Заповнюємо пропущені дати народження медіанним роком
 df["bdate"] = pd.to_datetime(df["bdate"], errors="coerce")
@@ -39,9 +46,30 @@ print(df.info())
 df = pd.get_dummies(df, columns=["education_form", "education_status", "occupation_type"], drop_first=True)
 
 
+
 # Вибір цільової змінної та ознак
+X = df.drop("result", axis=1)
+y = df["result"]
 
 # Розділення даних
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
 # Навчання моделі
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)  # Нормалізуємо тренувальні дані
+X_test = sc.transform(X_test)  # Нормалізуємо тестові дані на основі параметрів тренувальної вибірки
 
+classifier = KNeighborsClassifier(n_neighbors=5)  # Створюємо модель K-Nearest Neighbors з 5 сусідами
+classifier.fit(X_train, y_train)  # Навчаємо модель на тренувальних даних
+
+y_pred = classifier.predict(X_test)  # Виконуємо прогнозування на тестових даних
+print("Відсоток правильно передбачених результатів:",
+      accuracy_score(y_test, y_pred) * 100)  # Виводимо точність моделі
+print("Confusion matrix:")
+cm = confusion_matrix(y_test, y_pred)
+print(cm)  # Виводимо матрицю плутанини для оцінки моделі
+
+print(cm[0][0], "- правильно класифіковані як ті, хто не придбав курс")
+print(cm[0][1], "- помилково класифіковані як ті, хто придбав курс, хоча насправді вони його не придбали")
+print(cm[1][0], "- помилково класифіковані як ті, хто не придбав курс, хоча насправді вони його придбали")
+print(cm[1][1], "- правильно класифіковані як ті, хто придбав курс")
