@@ -1,3 +1,8 @@
+
+df2["bdate"] = pd.to_datetime(df2["bdate"], errors="coerce")
+df2["bdate_year"] = (df2["bdate"].
+                     dt.year.fillna(df2["bdate"].dt.year.median()))
+
 current_year = 2024
 df2["age"] = current_year - df2["bdate_year"]
 
