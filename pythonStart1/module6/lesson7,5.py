@@ -20,6 +20,7 @@ dy = 3
 move_left = False
 move_right = False
 
+
 # клас із попереднього проекту
 class Area:
     def __init__(self, x=0, y=0, width=10, height=10, color=None):
@@ -56,7 +57,6 @@ class Label(Area): # прямокутник із написом
     def draw(self, shift_x=0, shift_y=0): # відмалювання прямокутника із текстом
         self.fill() # відмальовуємо
         mw.blit(self.image, (self.rect.x + shift_x, self.rect.y + shift_y)) # додаємо текст
-
 
 # створення м'яча та платформи
 ball = Picture('ball.png', 160, 200, 50, 50)
@@ -95,24 +95,20 @@ while not game_over:
             if event.key == pygame.K_LEFT:
                 move_left = False
 
-        if move_right:
-            platform.rect.x += 3
-        if move_left:
-            platform.rect.x -= 3
+    if move_right:
+        platform.rect.x += 3
+    if move_left:
+        platform.rect.x -= 3
 
-        ball.rect.x += dx
-        ball.rect.y += dy
+    ball.rect.x += dx
+    ball.rect.y += dy
 
-        if ball.rect.x > 450 or ball.rect.x < 0:
-            dx *= -1
-        if ball.rect.y < 0:
-            dy *= -1
-        if ball.colliderect(platform.rect):
-            dy *= -1
-
-
-
-
+    if ball.rect.x > 450 or ball.rect.x < 0:
+        dx *= -1
+    if ball.rect.y < 0:
+        dy *= -1
+    if ball.colliderect(platform.rect):
+        dy *= -1
     # малюємо всіх монстрів зі списку
     for m in monsters:
         m.draw()
