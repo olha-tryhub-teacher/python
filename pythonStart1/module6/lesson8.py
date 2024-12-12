@@ -62,9 +62,8 @@ class Picture(Area):
         mw.blit(self.image, (self.rect.x, self.rect.y))
 
 # створення м'яча та платформи
-ball = Picture("olia2.png", 160, 200, 50, 50)
+ball = Picture('ball.png', 160, 200, 50, 50)
 platform = Picture('platform.png', racket_x, racket_y, 100, 30)
-
 
 # Створення ворогів
 start_x = 5  # координати створення першого монстра
@@ -75,7 +74,7 @@ for j in range(3):  # цикл по рядках
     y = start_y + (55 * j)  # координата монстра у кожному слід. рядку буде зміщена на 55 пікселів по y
     x = start_x + (27.5 * j)  # і 27.5 по x
     for i in range(count):  # цикл по рядах(рядків) створює в рядку кількість монстрів,що дорівнює count
-        d = Picture('vlas2.png', x, y, 50, 50)  # створюємо монстра
+        d = Picture('enemy.png', x, y, 50, 50)  # створюємо монстра
         monsters.append(d)  # додаємо до списку
         x = x + 55  # збільшуємо координату наступного монстра
     count = count - 1  # для наступного ряду зменшуємо кількість монстрів
