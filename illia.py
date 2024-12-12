@@ -1,5 +1,7 @@
-
-    def save_to_file(self):
-        with open("notes_data.json", "w", encoding="utf-8") as file:
-            json.dump(self.notes, file, sort_keys=True,
-                      ensure_ascii=False)
+    def add_note(self):
+        note_name, ok = QtWidgets.QInputDialog.getText(
+            self, "Додати замітку", "Назва замітки: ")
+        if ok and note_name != "":
+            self.notes[note_name] = {"текст": "", "теги": []}
+            self.ui.listWidget.addItem(note_name)
+            self.save_to_file()
