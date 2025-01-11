@@ -5,6 +5,10 @@ from PyQt5.QtWidgets import (
 
 from qss import QSS
 
+from PyQt5.QtCore import Qt # потрібна константа Qt.KeepAspectRatio для зміни розмірів із збереженням пропорцій
+from PyQt5.QtGui import QPixmap # оптимізована для показу на екрані картинка
+from PIL import Image
+
 app = QApplication([])
 win = QWidget()
 
