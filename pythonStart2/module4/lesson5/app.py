@@ -119,6 +119,31 @@ class ImageProcessor:
             self.dir, self.save_dir, self.filename)
         self.showImage(image_path)
 
+     # нові методи
+    def do_left(self):
+        self.image = self.image.transpose(Image.ROTATE_90)
+        self.saveImage()
+        image_path = os.path.join(workdir, self.save_dir, self.filename)
+        self.showImage(image_path)
+
+    def do_right(self):
+        self.image = self.image.transpose(Image.ROTATE_270)
+        self.saveImage()
+        image_path = os.path.join(workdir, self.save_dir, self.filename)
+        self.showImage(image_path)
+
+    def do_flip(self):
+        self.image = self.image.transpose(Image.FLIP_LEFT_RIGHT)
+        self.saveImage()
+        image_path = os.path.join(workdir, self.save_dir, self.filename)
+        self.showImage(image_path)
+
+    def do_sharpen(self):
+        self.image = self.image.filter(ImageFilter.SHARPEN)
+        self.saveImage()
+        image_path = os.path.join(workdir, self.save_dir, self.filename)
+        self.showImage(image_path)
+
 
 
 def showChosenImage():  # Оголошення функції `showChosenImage`, яка відображає вибране зображення з переліку файлів.
