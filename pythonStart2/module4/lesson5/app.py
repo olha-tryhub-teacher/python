@@ -115,11 +115,10 @@ class ImageProcessor:
     def do_bw(self):
         self.image = self.image.convert("L")
         self.saveImage()
-        image_path = os.path.join(
-            self.dir, self.save_dir, self.filename)
+        image_path = os.path.join(self.dir, self.save_dir, self.filename)
         self.showImage(image_path)
 
-     # нові методи
+    # нові методи
     def do_left(self):
         self.image = self.image.transpose(Image.ROTATE_90)
         self.saveImage()
@@ -144,6 +143,16 @@ class ImageProcessor:
         image_path = os.path.join(workdir, self.save_dir, self.filename)
         self.showImage(image_path)
 
+    def add_texture(self):
+        texture = Image.open("pink.png")
+        width, height = self.image.size
+        texture = texture.resize((width, height))
+        self.image.paste(texture, (0, 0), texture)
+
+        self.saveImage()
+        image_path = os.path.join(workdir,
+                                  self.save_dir, self.filename)
+        self.showImage(image_path)
 
 
 def showChosenImage():  # Оголошення функції `showChosenImage`, яка відображає вибране зображення з переліку файлів.
@@ -161,6 +170,11 @@ workimage = ImageProcessor() #поточне робоче зображення �
 lw_files.currentRowChanged.connect(showChosenImage)
 btn_bw.clicked.connect(workimage.do_bw)
 # нові підключення
+btn_left.clicked.connect(workimage.do_left)
+btn_right.clicked.connect(workimage.do_right)
+btn_sharp.clicked.connect(workimage.do_sharpen)
+btn_flip.clicked.connect(workimage.do_flip)
+btn_texture.clicked.connect(workimage.add_texture)
 
 
 app.exec()
