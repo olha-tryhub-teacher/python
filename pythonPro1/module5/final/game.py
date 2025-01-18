@@ -13,19 +13,19 @@ class Game(ShowBase):
         x, y = self.land.loadLand("land.txt")
         self.hero = Hero((x // 2, y // 2, 2), self.land)
 
-        # Завантажити модель Bugatti
-        model = self.loader.loadModel('bench.obj')
+        # Завантажити модель
+        model = self.loader.loadModel('models/backgrounds/sky_sphere')
         # Додати модель у сцену
         model.reparentTo(self.render)
 
-        base_texture = loader.loadTexture('benchTex.png')
-        model.setTexture(base_texture, 1)
+        base_texture = loader.loadTexture('models/backgrounds/img.png')
+        model.setTexture(base_texture)
 
-        # model.setColor((1, .75, .79, 1))
+        # model.setColor((1, 1, 1, 1))
 
         # Налаштувати позицію, масштаб і обертання
         model.setPos(0, 0, 0)
-        model.setScale(10, 10, 10)
+        model.setScale(50, 50, 50)
         model.setHpr(90, 0, 0)
 
         base.camLens.setFov(90)
@@ -52,10 +52,6 @@ class Game(ShowBase):
         pointLightNP = self.render.attachNewNode(pointLight)
         pointLightNP.setPos(10, 10, 15)  # Позиція світла
         self.render.setLight(pointLightNP)
-
-
-
-
 
 
 game = Game()
