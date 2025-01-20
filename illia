@@ -1,9 +1,50 @@
-from PIL import Image, ImageFilter
+from PIL import Image
+from PIL import ImageFilter
 
-# відкрий файл з оригіналом картинки
 
-# зроби оригінал зображення чорно-білим
+class ImageEditor():
+    def __init__(self, filename):
+        pass
 
-# зроби оригінал зображення розмитим
 
-# поверни оригінал зображення на 180 градусів
+    def open(self):
+        pass
+
+
+    def do_left(self):
+        rotated = self.original.transpose(Image.FLIP_LEFT_RIGHT)
+        self.changed.append(rotated)
+
+
+        # бонус. Автоматичний неймінг відредагованих картинок
+        temp_filename = self.filename.split('.')
+        new_filename = temp_filename[0] + str(len(self.changed)) + '.jpg'
+
+
+        rotated.save(new_filename)
+
+
+    # бонус. Обрізати фотографію
+    def do_cropped(self):
+        box = (250, 100, 400, 600) # ліво, верх, право, низ
+        cropped = self.original.crop(box)
+        self.changed.append(cropped)
+
+
+        # бонус. Автоматичний неймінг відредагованих картинок
+        temp_filename = self.filename.split('.')
+        new_filename = temp_filename[0] + str(len(self.changed)) + '.jpg'
+
+
+        cropped.save(new_filename)
+
+
+MyImage = ImageEditor('original.jpg')
+MyImage.open()
+
+MyImage.do_left()
+MyImage.do_cropped()
+
+
+for im in MyImage.changed:
+    im.show()
