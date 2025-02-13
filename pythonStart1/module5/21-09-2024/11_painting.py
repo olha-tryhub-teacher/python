@@ -52,7 +52,7 @@ def drawTriangle():
     t.forward(100)
     t.left(120)
     t.forward(100)
-    left(120)
+    t.left(120)
     t.end_fill()
 
 t.ondrag(draw)
