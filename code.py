@@ -1,111 +1,38 @@
-from pygame import *
-from random import randint #⬅️
+from socket import *
+import threading
+import time
 
-# нам потрібні такі картинки:
-img_back = "galaxy.jpg"  # фон гри
-img_hero = "rocket.png"  # герой
-img_enemy = "ufo.png"  # ворог ⬅️
+def connect():
+    while True:
+        try:
+            sock = socket(AF_INET, SOCK_STREAM)
+            sock.connect(('localhost', 8080))
+            name = input("Введіть ім'я: ")
+            sock.send(name.encode())
+            return sock
+        except:
+            print("З'єднання невдале, пробуємо ще...")
+            time.sleep(1)
 
-# створюємо віконце
-win_width = 700
-win_height = 500
-display.set_caption("Shooter")
-window = display.set_mode((win_width, win_height))
-background = transform.scale(image.load(img_back),
-                             (win_width, win_height))
+client_socket = connect()
 
-finish = False
-run = True
+def send_message():
+    while True:
+        msg = input()
+        if msg.lower() == 'exit':
+            client_socket.close()
+            break
+        client_socket.send(msg.encode())
 
-mixer.init()
-mixer.music.load('space.ogg')
-mixer.music.play(-1)
-fire_sound = mixer.Sound('fire.ogg')
+threading.Thread(target=send_message, daemon=True).start()
 
-# шрифти і написи⬅️
-font.init()
-font2 = font.Font(None, 36)
-
-score = 0  # збито кораблів
-lost = 0  # пропущено кораблів
-
-class GameSprite(sprite.Sprite):
-    def __init__(self, player_image, player_x, player_y,  # один рядок
-                 size_x, size_y, player_speed):
-        sprite.Sprite.__init__(self)
-        self.image = transform.scale(  # один рядок
-            image.load(player_image), (size_x, size_y))
-        self.speed = player_speed
-        self.rect = self.image.get_rect()
-        self.rect.x = player_x
-        self.rect.y = player_y
-
-    def reset(self):
-        window.blit(self.image, (self.rect.x, self.rect.y))
-
-
-# клас головного гравця
-class Player(GameSprite):
-
-    # метод для керування спрайтом стрілками клавіатури
-    def update(self):
-        keys = key.get_pressed()
-        if keys[K_LEFT] and self.rect.x > 5:
-            self.rect.x -= self.speed
-        if keys[K_RIGHT] and self.rect.x < win_width - 80:
-            self.rect.x += self.speed
-
-    # метод "постріл" (використовуємо місце гравця, щоб створити там кулю)
-    def fire(self):
-        pass
-
-
-# клас спрайта-ворога
-class Enemy(GameSprite):
-    # рух ворога
-    def update(self):
-        self.rect.y += self.speed
-        global lost
-        # зникає, якщо дійде до краю екрана
-        if self.rect.y > win_height:
-            self.rect.x = randint(80, win_width - 80)
-            self.rect.y = 0
-            lost = lost + 1
-
-
-
-# створюємо спрайти
-ship = Player(img_hero, 5, win_height - 100, 80, 100, 10)
-# створюємо ворогів ⬅️
-monsters = sprite.Group()
-for i in range(1, 6):
-    monster = Enemy(img_enemy, randint(
-        80, win_width - 80), -40, 80, 50, randint(1, 5))
-    monsters.add(monster)
-
-
-while run:
-    # подія натискання на кнопку Закрити
-    for e in event.get():
-        if e.type == QUIT:
-            run = False
-
-    if not finish:
-        window.blit(background, (0, 0))
-
-        # пишемо текст на екрані⬅️
-        text = font2.render("Рахунок: " + str(score), 1, (255, 255, 255))
-        window.blit(text, (10, 20))
-
-        text_lose = font2.render("Пропущено: " + str(lost), 1, (255, 255, 255))
-        window.blit(text_lose, (10, 50))
-
-        ship.update()
-        ship.reset()
-
-        monsters.update()
-        monsters.draw(window)
-
-        display.update()
-    # цикл спрацьовує кожні 0.05 секунд
-    time.delay(50)
+while True:
+    try:
+        message = client_socket.recv(1024).decode().strip()
+        if message:
+            print(message)
+        else:
+            break
+    except:
+        print("Відключено від чату")
+        break
