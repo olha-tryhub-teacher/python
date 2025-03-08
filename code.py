@@ -1,8 +1,10 @@
 from pygame import *
+from random import randint #⬅️
 
 # нам потрібні такі картинки:
 img_back = "galaxy.jpg"  # фон гри
 img_hero = "rocket.png"  # герой
+img_enemy = "ufo.png"  # ворог ⬅️
 
 # створюємо віконце
 win_width = 700
@@ -19,6 +21,9 @@ mixer.init()
 mixer.music.load('space.ogg')
 mixer.music.play(-1)
 fire_sound = mixer.Sound('fire.ogg')
+
+score = 0  # збито кораблів⬅️
+lost = 0  # пропущено кораблів⬅️
 
 class GameSprite(sprite.Sprite):
     def __init__(self, player_image, player_x, player_y,  # один рядок
@@ -49,6 +54,20 @@ class Player(GameSprite):
     # метод "постріл" (використовуємо місце гравця, щоб створити там кулю)
     def fire(self):
         pass
+
+
+# клас спрайта-ворога⬅️
+class Enemy(GameSprite):
+    # рух ворога
+    def update(self):
+        self.rect.y += self.speed
+        global lost
+        # зникає, якщо дійде до краю екрана
+        if self.rect.y > win_height:
+            self.rect.x = randint(80, win_width - 80)
+            self.rect.y = 0
+            lost = lost + 1
+
 
 
 # створюємо спрайти
