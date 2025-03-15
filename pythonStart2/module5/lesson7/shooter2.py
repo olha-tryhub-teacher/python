@@ -1,10 +1,12 @@
 from pygame import *
-from random import randint #⬅️
+from random import randint
 
 # нам потрібні такі картинки:
 img_back = "galaxy.jpg"  # фон гри
 img_hero = "rocket.png"  # герой
-img_enemy = "ufo.png"  # ворог ⬅️
+img_enemy = "ufo.png"  # ворог
+img_bullet = "bullet.png" # куля ⬅️
+
 
 # створюємо віконце
 win_width = 700
@@ -22,12 +24,16 @@ mixer.music.load('space.ogg')
 mixer.music.play(-1)
 fire_sound = mixer.Sound('fire.ogg')
 
-# шрифти і написи⬅️
+# шрифти і написи
 font.init()
 font2 = font.Font(None, 36)
 
+
 score = 0  # збито кораблів
 lost = 0  # пропущено кораблів
+goal = 10 # стільки кораблів потрібно збити для перемоги ⬅️
+max_lost = 3 # програли, якщо пропустили стільки ⬅️
+
 
 class GameSprite(sprite.Sprite):
     def __init__(self, player_image, player_x, player_y,  # один рядок
@@ -56,8 +62,11 @@ class Player(GameSprite):
             self.rect.x += self.speed
 
     # метод "постріл" (використовуємо місце гравця, щоб створити там кулю)
-    def fire(self):
-        pass
+    def fire(self): # створюємо після класу булєт ⬅️⬅️⬅️
+        bullet = Bullet(img_bullet,  # один рядок
+                        self.rect.centerx,  #один рядок
+                        self.rect.top, 15, 20, -15)
+        bullets.add(bullet)
 
 
 # клас спрайта-ворога
@@ -73,15 +82,28 @@ class Enemy(GameSprite):
             lost = lost + 1
 
 
+# клас спрайта-кулі  ⬅️⬅️⬅️
+class Bullet(GameSprite):
+    # рух ворога
+    def update(self):
+        self.rect.y += self.speed
+        # зникає, якщо дійде до краю екрана
+        if self.rect.y < 0:
+            self.kill()
+
+
+
 
 # створюємо спрайти
 ship = Player(img_hero, 5, win_height - 100, 80, 100, 10)
-# створюємо ворогів ⬅️
+# створюємо ворогів
 monsters = sprite.Group()
 for i in range(1, 6):
     monster = Enemy(img_enemy, randint(
         80, win_width - 80), -40, 80, 50, randint(1, 5))
     monsters.add(monster)
+# створюємо групу для куль⬅️⬅️⬅️ (далі робимо метод для пострілу в класі плеєр)
+bullets = sprite.Group()
 
 
 while run:
@@ -89,11 +111,16 @@ while run:
     for e in event.get():
         if e.type == QUIT:
             run = False
+        # подія натискання на пробіл - спрайт стріляє⬅️⬅️⬅️
+        elif e.type == KEYDOWN:
+            if e.key == K_SPACE:
+                fire_sound.play()
+                ship.fire()
 
     if not finish:
         window.blit(background, (0, 0))
 
-        # пишемо текст на екрані⬅️
+        # пишемо текст на екрані
         text = font2.render("Рахунок: " + str(score), 1, (255, 255, 255))
         window.blit(text, (10, 20))
 
@@ -105,6 +132,11 @@ while run:
 
         monsters.update()
         monsters.draw(window)
+
+        # рухаємо та оновлюємо кулі⬅️⬅️⬅️
+        bullets.update()
+        bullets.draw(window)
+
 
         display.update()
     # цикл спрацьовує кожні 0.05 секунд
