@@ -1,13 +1,8 @@
-class Area():
-    def __init__(self, x=0, y=0, width=10, height=10, color=None):
-        self.rect = Rect(x, y, width, height)  # прямокутник
-        self.fill_color = color
+class Label(Area):
+    def set_text(self, text, fsize=12, text_color=(0, 0, 0)):
+        self.image = font.SysFont('verdana', fsize).render(text, True, text_color)
 
-    def color(self, new_color):
-        self.fill_color = new_color
-
-    def fill(self):
-        draw.rect(mw, self.fill_color, self.rect)
-
-    def outline(self, frame_color, thickness):  # обведення існуючого прямокутника
-        draw.rect(mw, frame_color, self.rect, thickness)
+    def draw(self, shift_x=0, shift_y=0):
+        self.fill()
+        self.outline(BLUE, 10)  # Додаємо малювання контуру
+        mw.blit(self.image, (self.rect.x + shift_x, self.rect.y + shift_y))
