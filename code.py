@@ -1,22 +1,18 @@
-YELLOW = (255, 255, 0)
-DARK_BLUE = (0, 0, 100)
-BLUE = (80, 80, 255)
+        # перевірка зіткнення кулі та монстрів (і монстр, і куля при зіткненні зникають)⬅️⬅️⬅️
+        collides = sprite.groupcollide(monsters, bullets, True, True)
+        for c in collides:
+            # цей цикл повториться стільки разів, скільки монстрів збито⬅️⬅️⬅️
+            score = score + 1
+            monster = Enemy(img_enemy, randint(80, win_width - 80),
+                            -40, 80, 50, randint(1, 5))
+            monsters.add(monster)
 
-cards = []
-num_cards = 4
+        # можливий програш: пропустили занадто багато або герой зіткнувся з ворогом⬅️⬅️⬅️
+        if sprite.spritecollide(ship, monsters, False) or lost >= max_lost:
+            finish = True  # програли, ставимо тло і більше не керуємо спрайтами.⬅️⬅️⬅️
+            window.blit(lose, (200, 200))
 
-x = 70
-
-for i in range(num_cards):
-    new_card = Label(x, 170, 70, 100, YELLOW)
-    new_card.outline(BLUE, 10)
-    new_card.set_text('CLICK', 14)
-    cards.append(new_card)
-    x = x + 100
-
-while True:
-    for card in cards:
-        card.draw(10, 30)
-
-    display.update()
-    clock.tick(40)
+        # перевірка виграшу: скільки очок набрали?⬅️⬅️⬅️
+        if score >= goal:
+            finish = True
+            window.blit(win, (200, 200))
