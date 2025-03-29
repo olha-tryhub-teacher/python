@@ -1,9 +1,11 @@
-text = input("текст запиту?")
-for letter in text:
-    if letter in "#$@":
-        print(f"Запит містить заборонений символ: {letter}.")
-        text = ""
-        break
-
-if len(text) > 0:
-    print("Запит прийнято.")
+max_count = 125
+comment = input("Введіть ваш коментар: ")
+count = 0
+for char in comment:
+    if char == " ":
+        continue
+    count += 1
+if count > max_count:
+    print( "Коментар не буде опубліковано: досягнуто ліміт у 125 символів.")
+else:
+    print("Коментар було опубліковано!")
