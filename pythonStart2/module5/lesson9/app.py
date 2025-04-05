@@ -10,7 +10,6 @@ img_bullet = "bullet.png" # куля
 img_ast = "asteroid.png" # астероїд ⬅️
 
 
-
 # створюємо віконце
 win_width = 700
 win_height = 500
@@ -77,6 +76,16 @@ class Player(GameSprite):
         bullets.add(bullet)
 
 
+class Asteroid(GameSprite):
+    def update(self):
+        self.rect.y += self.speed
+        global lost
+        # зникає, якщо дійде до краю екрана
+        if self.rect.y > win_height:
+            self.rect.x = randint(80, win_width - 80)
+            self.rect.y = 0
+
+
 # клас спрайта-ворога
 class Enemy(GameSprite):
     # рух ворога
@@ -114,7 +123,7 @@ bullets = sprite.Group()
 # створення групи спрайтів-астероїдів ⬅️⬅️⬅️
 asteroids = sprite.Group()
 for i in range(1, 3):
-    asteroid = Enemy(img_ast, randint(30, win_width - 30), # один рядок
+    asteroid = Asteroid(img_ast, randint(30, win_width - 30), # один рядок
                      -40, 80, 50, randint(1, 7))
     asteroids.add(asteroid)
 
@@ -196,9 +205,6 @@ while run:
 
         hearts = emoji_font.render('❤️' * life, True, (255, 100, 100))
         window.blit(hearts, (win_width - 200, win_height - 50))
-
-
-
 
 
         # перевірка виграшу: скільки очок набрали?
