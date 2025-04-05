@@ -1,15 +1,18 @@
-h = input("Висота клумби:")
-w = input("Ширина клумби:")
-if h.isdigit() and w.isdigit():
-    h, w = int(h), int(w)
-    if h > 0 and w > 0:
-        for i in range(h):
-            if i == 0 or i == (h - 1):
-                print(w * "🧱")
-            else:
-                print("🧱" + (w - 2) * "🌹" + "🧱")
-        print("Клумба готова! Архітектор пишається вашою роботою!")
+print("🚴 Велосипедист починає свій шлях від старту до фінішу! 🚴")
+finish = ""
+dist = int(input("Довжина траси:"))
+velo = "🏁" + dist * "➖" + "🚴" + "🏁"
+velo += "\n"
+back = 0
+while dist > 0:
+    move = int(input("Скільки проїхав?"))
+    if dist - move >= 0:
+        back += move
+        dist = dist - move
+        row = dist * "➖" + "🚴" + back * "➖"
+        velo += "🏁" + row + "🏁" + "\n"
     else:
-        print("Клумба не може бути із розмірами 0!")
-else:
-    print("Розміри клумби мають бути числами!")
+        print("Неможливо! Перепитай художника!")
+print(velo)
+
+print("Велосипедист 🚴 успішно доїхав до фінішу! 🏁")
