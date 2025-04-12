@@ -1,23 +1,32 @@
-for j in range(3):  # цикл по стовпцях
-    y = start_y + (55 * j)  # координата монстра у кожному слід. стовпці буде зміщена на 55 пікселів по y
-    x = start_x + (27.5 * j)  # і 27.5 по x
-    for i in range(count):  # цикл по рядах(рядків) створює в рядку кількість монстрів,що дорівнює count
-        d = Picture('enemy.png', x, y, 50, 50)  # створюємо монстра
-        monsters.append(d)  # додаємо до списку
-        x = x + 55  # збільшуємо координату наступного монстра
-    count = count - 1  # для наступного ряду зменшуємо кількість монстрів
+import pandas as pd
+import numpy as np
+from flask import Flask, render_template
+import os
 
-while not game_over:
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            game_over = True
-    # малюємо всіх монстрів зі списку
-    for m in monsters:
-        m.draw()
+def index():
+    data = pd.read_csv("data.csv")
+    photo = "photo.jpg" #######
+    name = data[data["category"] == "name"]["text"].values[0]
+    position = data[data["category"] == "position"]["text"].values[0]
+    contacts = data[data["category"] == "contacts"][["text", "link"]].replace({np.nan: None}).values
+    summary = data[data["category"] == "summary"]["text"].values[0] # ⬅️⬅️⬅️⬅️⬅️
+    skills = data[data["category"] == "skills"]["text"].values
+    projects = data[data["category"] == "projects"][["text", "link"]].replace({np.nan: None}).values
+    education = data[data["category"] == "education"]["text"].values
+    achievements = data[data["category"] == "achievements"]["text"].values
+    facts = data[data["category"] == "facts"]["text"].values
 
-    platform.draw()
-    ball.draw()
+    return render_template("index.html", name=name, photo=photo,#########
+                           position=position, summary=summary,
+                           contacts=contacts, skills=skills,
+                           projects=projects,
+                           education=education, achievements=achievements,
+                           facts=facts)
 
-    pygame.display.update()
-    clock.tick(40)
+
+folder = os.getcwd() # запам'ятали поточну робочу папку
+app = Flask(__name__, template_folder=folder, static_folder=folder)
+app.add_url_rule("/", "index", index)
+
+app.run()
