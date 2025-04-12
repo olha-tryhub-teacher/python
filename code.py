@@ -1,33 +1,72 @@
-#https://drive.google.com/drive/u/0/folders/1Ny-hMwcBuIzsFdqT-s9xc6HiElYfe5sK
-import pandas as pd
-import numpy as np
-from flask import Flask, render_template
-import os
+from customtkinter import *
 
 
-def index():
-    data = pd.read_csv("data.csv")
-    photo = "photo.jpg" #######
-    name = data[data["category"] == "name"]["text"].values[0]
-    position = data[data["category"] == "position"]["text"].values[0]
-    contacts = data[data["category"] == "contacts"][["text", "link"]].replace({np.nan: None}).values
-    summary = data[data["category"] == "summary"]["text"].values[0] # ⬅️⬅️⬅️⬅️⬅️
-    skills = data[data["category"] == "skills"]["text"].values
-    projects = data[data["category"] == "projects"][["text", "link"]].replace({np.nan: None}).values
-    education = data[data["category"] == "education"]["text"].values
-    achievements = data[data["category"] == "achievements"]["text"].values
-    facts = data[data["category"] == "facts"]["text"].values
+class MainWindow(CTk):
+   def __init__(self):
+       super().__init__()
+       self.geometry('400x300')
+       self.label = None
+       # menu frame
+       self.menu_frame= CTkFrame(self, width=30, height=300)
+       self.menu_frame.pack_propagate(False)
+       self.menu_frame.place(x=0, y=0)
+       self.is_show_menu = False
+       self.speed_animate_menu = -5
+       self.btn = CTkButton(self, text='▶️', command=self.toggle_show_menu, width=30)
+       self.btn.place(x=0, y=0)
+       #main
+       self.chat_field = CTkScrollableFrame(self)
+       self.chat_field.place(x=0, y=0)
+       self.message_entry = CTkEntry(self, placeholder_text='Введіть повідомлення:', height=40)
+       self.message_entry.place(x=0, y=0)
+       self.send_button = CTkButton(self, text='>', width=50, height=40)
+       self.send_button.place(x=0, y=0)
 
-    return render_template("index.html", name=name, photo=photo,#########
-                           position=position, summary=summary,
-                           contacts=contacts, skills=skills,
-                           projects=projects,
-                           education=education, achievements=achievements,
-                           facts=facts)
+
+       self.adaptive_ui()
 
 
-folder = os.getcwd() # запам'ятали поточну робочу папку
-app = Flask(__name__, template_folder=folder, static_folder=folder)
-app.add_url_rule("/", "index", index)
+   def toggle_show_menu(self):
+       if self.is_show_menu:
+           self.is_show_menu = False
+           self.speed_animate_menu *= -1
+           self.btn.configure(text='▶️')
+           self.show_menu()
+       else:
+           self.is_show_menu = True
+           self.speed_animate_menu *= -1
+           self.btn.configure(text='◀️')
+           self.show_menu()
+           # setting menu widgets
+           self.label = CTkLabel(self.menu_frame, text='Імʼя')
+           self.label.pack(pady=30)
+           self.entry = CTkEntry(self.menu_frame)
+           self.entry.pack()
 
-app.run()
+
+   def show_menu(self):
+       self.menu_frame.configure(width=self.menu_frame.winfo_width() + self.speed_animate_menu)
+       if not self.menu_frame.winfo_width() >= 200 and self.is_show_menu:
+           self.after(10, self.show_menu)
+       elif self.menu_frame.winfo_width() >= 40 and not self.is_show_menu:
+           self.after(10, self.show_menu)
+           if self.label and self.entry:
+               self.label.destroy()
+               self.entry.destroy()
+
+
+   def adaptive_ui(self):
+       self.menu_frame.configure(height=self.winfo_height())
+       self.chat_field.place(x=self.menu_frame.winfo_width())
+       self.chat_field.configure(width=self.winfo_width()-self.menu_frame.winfo_width() - 20,
+                                 height=self.winfo_height()-40)
+       self.send_button.place(x=self.winfo_width()-50, y=self.winfo_height()-40)
+       self.message_entry.place(x=self.menu_frame.winfo_width(), y=self.send_button.winfo_y())
+       self.message_entry.configure(width=self.winfo_width() - self.menu_frame.winfo_width() - self.send_button.winfo_width())
+
+
+       self.after(50, self.adaptive_ui)
+
+
+win = MainWindow()
+win.mainloop()
