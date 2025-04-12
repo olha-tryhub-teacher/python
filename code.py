@@ -14,16 +14,7 @@ class MainWindow(CTk):
        self.speed_animate_menu = -5
        self.btn = CTkButton(self, text='▶️', command=self.toggle_show_menu, width=30)
        self.btn.place(x=0, y=0)
-       #main
-       self.chat_field = CTkScrollableFrame(self)
-       self.chat_field.place(x=0, y=0)
-       self.message_entry = CTkEntry(self, placeholder_text='Введіть повідомлення:', height=40)
-       self.message_entry.place(x=0, y=0)
-       self.send_button = CTkButton(self, text='>', width=50, height=40)
-       self.send_button.place(x=0, y=0)
 
-
-       self.adaptive_ui()
 
 
    def toggle_show_menu(self):
@@ -54,18 +45,6 @@ class MainWindow(CTk):
                self.label.destroy()
                self.entry.destroy()
 
-
-   def adaptive_ui(self):
-       self.menu_frame.configure(height=self.winfo_height())
-       self.chat_field.place(x=self.menu_frame.winfo_width())
-       self.chat_field.configure(width=self.winfo_width()-self.menu_frame.winfo_width() - 20,
-                                 height=self.winfo_height()-40)
-       self.send_button.place(x=self.winfo_width()-50, y=self.winfo_height()-40)
-       self.message_entry.place(x=self.menu_frame.winfo_width(), y=self.send_button.winfo_y())
-       self.message_entry.configure(width=self.winfo_width() - self.menu_frame.winfo_width() - self.send_button.winfo_width())
-
-
-       self.after(50, self.adaptive_ui)
 
 
 win = MainWindow()
