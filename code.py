@@ -1,46 +1,73 @@
-class WaveManager:
-    def __init__(self):
-        self.wave_number = 1
-        self.zombies_per_wave = 5
-        self.zombies_remaining = self.zombies_per_wave
+import pygame
 
-    def next_wave(self):
-        self.wave_number += 1
-        self.zombies_per_wave = 5 + self.wave_number * 2  # щораз більше зомбі
-        self.zombies_remaining = self.zombies_per_wave
-        self.spawn_wave()
+pygame.init()
 
-    def spawn_wave(self):
-        for _ in range(self.zombies_per_wave):
-            zombi = Enemy(img_zombi, randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
-            zombis.add(zombi)
+'''СТВОРЕННЯ ВІКНА'''
 
-    def zombie_killed(self):
-        self.zombies_remaining -= 1
-        if self.zombies_remaining <= 0:
-            return True  # Хвиля завершена
-        return False
+back = (200, 255, 255)  # колір фону (background)
+window = pygame.display.set_mode((500, 500))  # Вікно програми
+window.fill(back)
+clock = pygame.time.Clock()
 
 
+#прапор закінчення гри⬅️
+game_over = False
 
-Ініціалізуй менеджер хвиль:
-wave_manager = WaveManager()
-wave_manager.spawn_wave()
-
-
-Онови частину, де збиваються зомбі:
-collides = sprite.groupcollide(zombis, bullets, True, True)
-for c in collides:
-    score += 1
-    if wave_manager.zombie_killed():
-        wave_manager.next_wave()  # Запускаємо нову хвилю
+'''клас прямокутник'''
 
 
-💡 Можеш додати текст хвилі на екран:
-python
-Копіювати
-Редагувати
-wave_text = font2.render(f'Wave {wave_manager.wave_number}', True, (255, 255, 0))
-window.blit(wave_text, (10, 10))
+class Area():
+    def __init__(self, x=0, y=0, width=10, height=10, color=None):
+        self.rect = pygame.Rect(x, y, width, height)  # прямокутник
+        self.fill_color = color
 
+    def color(self, new_color):
+        self.fill_color = new_color
+
+    def fill(self):
+        pygame.draw.rect(window, self.fill_color, self.rect)
+
+    def outline(self, frame_color, thickness):  # обведення існуючого прямокутника
+        pygame.draw.rect(window, frame_color, self.rect, thickness)
+
+    def collidepoint(self, x, y):
+        return self.rect.collidepoint(x, y)
+
+    def colliderect(self, rect): # новий метод для зіткнення⬅️
+        return self.rect.colliderect(rect)
+
+
+'''клас напис'''
+
+
+class Label(Area):
+    def set_text(self, text, fsize=12, text_color=(0, 0, 0)):
+        self.image = pygame.font.SysFont('verdana', fsize).render(text, True, text_color)
+
+    def draw(self, shift_x=0, shift_y=0):
+        self.fill()
+        window.blit(self.image, (self.rect.x + shift_x, self.rect.y + shift_y))
+
+
+# клас для об'єктів-картинок⬅️
+class Picture(Area):
+    def __init__(self, filename, x=0, y=0, width=10, height=10):
+        super().__init__(x=x, y=y, width=width, height=height, color=None)
+        self.image = pygame.image.load(filename), (width, height)
+
+    def draw(self):
+        window.blit(self.image, (self.rect.x, self.rect.y))
+
+
+# ПРИКЛАД СТВОРЕННЯ ОБ'ЄКТІВ
+ball = Picture('ball.png', 160, 200, 150, 150)
+platform = Picture('platform.png', racket_x, racket_y, 100, 30)
+
+
+while not game_over:
+    # ТУТ БУДЕ ІГРОВА ЛОГІКА
+
+    
+    pygame.display.update()
+    clock.tick(40)
 
