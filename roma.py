@@ -1,5 +1,2 @@
-if mode == "catch":
-    for bonus in bonus_ships:
-        if bonus.rect.collidepoint(x, y):
-            coins += 1
-            bonus.kill()
+bonus_hit_by_cannon = sprite.groupcollide(bonus_ships, cannonballs, True, True)
+bonus_hit_by_torpedo = sprite.groupcollide(bonus_ships, torpedos, True, True)
