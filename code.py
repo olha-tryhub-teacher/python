@@ -1,11 +1,18 @@
-new_coordinates = []
+def chek_color(color):
+    if color[0] == "#" and len(color) == 7:
+        for c in color[1:]:
+            if c not in valid_chars:
+                return False
+    else:
+        return False
+    return True
 
-for i in range(0, len(coordinates), 2):
-    x = coordinates[i]
-    y = coordinates[i + 1]
-    if 0 <= x <= 50 and 0 <= y <= 50:
-        new_coordinates.append(x)
-        new_coordinates.append(y)
-
-for i in range(0, len(new_coordinates), 2):
-    print("x:", new_coordinates[i], "; y:", new_coordinates[i + 1])
+pallet = list()
+ans = input("Color ?")
+while ans != "0":
+    if chek_color(ans):
+        pallet.append(ans)
+    else:
+        print("Некоректно введений колір.")
+    ans = input("Color ?")
+print(pallet)
