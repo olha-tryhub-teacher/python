@@ -1,10 +1,15 @@
-speed(0)
-hideturtle()
+v1 = Vector3D(1, 2, 3)
+v2 = Vector3D(4, 5, 6)
 
+v3 = v1 + v2
+print(f"Додавання векторів: {v3}")
 
-def zero(x, y, size, col):
-    start(x + size // 2, y)
-    width(5)
-    setheading(0)
-    color(col)
-    circle(size // 2)
+v4 = v1 - v2
+print(f"Віднімання векторів: {v4}")
+
+v5 = v1 * 2
+print(f"Множення вектора на скаляр: {v5}")
+
+print(f"Порівняння векторів v1 і v2: {v1 == v2}")  # Повинно вивести False
+
+print(f"{'-' * 35}\nВсього було створено {Vector3D.get_count()} векторів")
