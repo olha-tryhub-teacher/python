@@ -1,26 +1,14 @@
-def writeAsk(word):
-    start(-170, 100)
-    setheading(0)
-    width(4)
+def writeWrong(letter):
     color("black")
-    for w in word:
-        fd(30)
-        penup()
-        fd(15)
-        pendown()
-
-
-def writeRight(letter, word):
-    start(-170, 105)
+    write(letter, font=("Arial", 28))
+    color("red")
+    width(2)
+    setheading(45)
+    fd(30)
+    setheading(180)
     penup()
-    color("black")
-    setheading(0)
-    count = 0
-    for w in word:
-        if w == letter:
-            pendown()
-            write(letter, font=("Arial", 32))
-            penup()
-            count += 1
-        fd(45)
-    return count
+    fd(20)
+    setheading(270 + 45)
+    pendown()
+    fd(30)
+    color("grey")
