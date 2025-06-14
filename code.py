@@ -1,38 +1,84 @@
 from turtle import *
-from gallows import *
 from art import *
-from random import choice
+#підключи модуль turtle
+#встанови швидкість(speed) черепашки - 0 
+#перший малюнок - список кольорів та закодований малюнок
+colors_map1 = ["#a7adad", "#fafafa", "#4064f9 ", "#080808","#f09510 "]
+pic_map1 = [ "------000------",
+            "------000------",
+            "-----11111-----",
+            "---111111111---",
+            "--11111111111--",
+            "-1111221221111-",
+            "-1111231231111-",
+            "111111144111111",
+            "111111444441111",
+            "111311144444411",
+            "111333311133111",
+            "-1113333331111-",
+            "-1111333331111-",
+            "--11113331111--",
+            "---111111111---",
+            "-----11111-----"]
+#другий малюнок - список кольорів та закодований малюнок
+colors_map2 = ["#613c05", "#af7725", "#f8d7a8", "#020202","#cf1c0d"]
+pic_map2 = ["0--------------0",
+            "0--------------0",
+            "00--0------0--00",
+            "00-00------0-000",
+            "-0000-0--0-0000-",
+            "-000000--000000-",
+            "---0000--0000---",
+            "-----00--00-----",
+            "-111-111111-111-",
+            "-12111111111121-",
+            "-11111111111111-",
+            "---1113113111---",
+            "---1113113111---",
+            "---1111111111---",
+            "--112222222211--",
+            "-11224444442211-",
+            "-12244444444221-",
+            "-22444444444422-",
+            "-22444444444422-",
+            "-22244444444222-",
+            "--222244442222--",
+            "-----222222-----"]
+#третій малюнок - список кольорів та закодований малюнок
+colors_map3 = ["#fafafa","#f9e2e0","#000000","#e53021","#46a7ea","#4eecf4"]
+pic_map3 = ["----000----",
+            "--0000000--",
+            "-000110000-",
+            "-001111100-",
+            "-012111210-",
+            "-011111110-",
+            "-001131100-",
+            "--00111000-",
+            "---442400--",
+            "--4444400--",
+            "-44544400--",
+            "11554440511",
+            "-554444455-",
+            "55444444455",
+            "55444444455"]
+            
+tracer(9)
+pixel_sizes = 10
+coordinates = [-200,0,140,160,-20,50]
+pixel_size = 10
 
-words = ["папуга", "школа", "карета", "відео", "намисто","шоколадка"]
-word = choice(words)
-countRight = 0
-countWrong = 0
-xWrong, yWrong = -170, 50
-
-# setup(1000, 800)
-
-writeAsk(word)
-
-while True:
-    letter = input("Введіть літеру:")
-    if letter in word:
-        c = writeRight(letter, word)
-        countRight += c
-    else:
-        penup()
-        goto(xWrong, yWrong)
-        pendown()
-        if xWrong < 50:
-            xWrong += 45
-        else:
-            xWrong, yWrong = -170, yWrong - 45
-        writeWrong(letter)
-        countWrong += 1
-        drawGalows(countWrong)
-
-    if countWrong == 12:
-        print("Lose")
-        break
-    if countRight == len(word):
-        print("Win")
-        break
+def drawPix(x,y, pic_map, colors_map):
+    x_start = x
+    for line in pic_map:
+        for num in line:
+            start(x,y)
+            if num != "-":
+                square_fill(pixel_size,colors_map[int(num)])
+            x += pixel_size 
+        x = x_start
+        y -= pixel_size 
+start(-300,-300)
+square_fill(800,"#bbeef9")
+drawPix(coordinates[0],coordinates[1],pic_map1,colors_map1)
+drawPix(coordinates[2],coordinates[3],pic_map2,colors_map2)
+drawPix(coordinates[4],coordinates[5],pic_map3,colors_map3)
