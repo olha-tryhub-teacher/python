@@ -15,3 +15,5 @@ books = [
 ]
 
 pages_sum = sum(book.pages for book in books)
+
+print("Total pages:", pages_sum)
