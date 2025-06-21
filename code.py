@@ -1,29 +1,39 @@
-class OrderItem: #### new
-    def __init__(self, product, quantity):
-        self.product = product
-        self.quantity = quantity
+from нава модуля import *
 
-    def calculate_subtotal(self):
-        return self.product.price * self.quantity
+import unittest
 
-class OrderProcessor: #### new
-    def process_order(self, order, discount_strategy):
-        total = order.calculate_total()
-        total_after_discount = discount_strategy.apply_discount(total)
-        if total_after_discount > 100:
-            order.status = "Completed"
 
-# Використання
-customer = Customer("John")
-product1 = Product("Laptop", 1000)
-product2 = Product("Headphones", 100)
-order = Order(customer)
-order.add_item(product1, 2)
-order.add_item(product2, 1)
 
-discount_strategy = FixedDiscount(50)
-order_processor = OrderProcessor()
-order_processor.process_order(order, discount_strategy)
+# Ваш код класів і функцій тут (залишено незмінним)
 
-print(f"Order total: ${order.calculate_total()}")
-print(f"Order status: {order.status}")
+class TestOrder(unittest.TestCase):
+    def setUp(self):
+        self.customer = Customer("John")
+        self.product1 = Product("Laptop", 1000)
+        self.product2 = Product("Headphones", 100)
+        self.order = Order(self.customer)
+        self.order.add_item(self.product1, 2)
+        self.order.add_item(self.product2, 1)
+
+    def test_calculate_total(self):
+        total = self.order.calculate_total()
+        self.assertEqual(total, 2100)
+
+    def test_order_status_processing(self):
+        self.assertEqual(self.order.status, "Processing")
+
+    def test_order_status_completed(self):
+        discount_strategy = FixedDiscount(50)
+        order_processor = OrderProcessor()
+        order_processor.process_order(self.order, discount_strategy)
+        self.assertEqual(self.order.status, "Completed")
+
+    def test_order_status_not_completed(self):
+        discount_strategy = FixedDiscount(10)
+        order_processor = OrderProcessor()
+        order_processor.process_order(self.order, discount_strategy)
+        self.assertEqual(self.order.status, "Processing")
+
+
+if __name__ == "__main__":
+    unittest.main()
