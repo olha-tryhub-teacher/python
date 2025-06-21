@@ -1,19 +1,7 @@
-class Book():
-    def __init__(self, title, author, pages):
-        self.title = title
-        self.author = author
-        self.pages = pages
+def generate_numbers(a, b):
+    for n in range(a, b + 1):
+        yield n + n - a + 1
 
-    def __str__(self):
-        return f"{self.title} ({self.author}) - {self.pages} сторінок"
 
-books = [
-    Book("Колонія", "Макс Кідрук", 600),
-    Book("Ворошиловград", "Сергій Жадан", 200),
-    Book("Я бачу, вас цікавить пітьма", "Ілларіон Павлюк", 400),
-    Book("Я (Романтика)", "Микола Хвильовий", 200)
-]
-
-pages_sum = sum(book.pages for book in books)
-
-print("Total pages:", pages_sum)
+for number in generate_numbers(3, 6):
+    print(number)
