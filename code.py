@@ -1,52 +1,29 @@
-class Product:
-    def __init__(self, name, price, quantity):
-        self.name = name
-        self.price = price
+class OrderItem: #### new
+    def __init__(self, product, quantity):
+        self.product = product
         self.quantity = quantity
 
-    def __str__(self):
-        return f"{self.name}, Ціна: {self.price}, Кількість: {self.quantity}"
+    def calculate_subtotal(self):
+        return self.product.price * self.quantity
 
+class OrderProcessor: #### new
+    def process_order(self, order, discount_strategy):
+        total = order.calculate_total()
+        total_after_discount = discount_strategy.apply_discount(total)
+        if total_after_discount > 100:
+            order.status = "Completed"
 
-class Store:
-    def __init__(self):
-        self.products = []
+# Використання
+customer = Customer("John")
+product1 = Product("Laptop", 1000)
+product2 = Product("Headphones", 100)
+order = Order(customer)
+order.add_item(product1, 2)
+order.add_item(product2, 1)
 
-    def add_product(self, product):
-        self.products.append(product)
+discount_strategy = FixedDiscount(50)
+order_processor = OrderProcessor()
+order_processor.process_order(order, discount_strategy)
 
-    def generate_product_list(self):
-        for product in self.products:
-            yield product
-
-
-def generate_product_page(product_generator, limit):
-    count = 0
-    for product in product_generator:
-        if count < limit:
-            print(product)
-            count += 1
-        if count == limit:
-            break
-
-
-# Створення магазину і додавання товарів
-store = Store()
-
-store.add_product(Product("Ліжко", 500, 5))
-store.add_product(Product("Стіл", 250, 3))
-store.add_product(Product("Стілець", 50, 10))
-store.add_product(Product("Шафа", 350, 4))
-store.add_product(Product("Диван", 800, 2))
-store.add_product(Product("Комод", 150, 6))
-store.add_product(Product("Столик", 100, 8))
-store.add_product(Product("Крісло", 75, 12))
-store.add_product(Product("Тумба", 55, 5))
-store.add_product(Product("Полиця", 200, 7))
-
-
-# Генератор для виведення товарів на сторінку сайту
-products_generated = store.generate_product_list()
-
-while input() == 'c':
-    generate_product_page(products_generated, limit=3)
+print(f"Order total: ${order.calculate_total()}")
+print(f"Order status: {order.status}")
