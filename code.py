@@ -1,20 +1,14 @@
-def draw_cloud_contour():
+def cross(x, y, size, col):
     penup()
-    goto(-30, -10)  # початкова позиція
+    goto(x, y)  # початкова позиція
     pendown()
-    color("black","white")
-    width(4)
-    speed(3)
+    color("black","blue")
+    width(2)
     begin_fill()
-    # Малюємо хмаринку з 5 перекриваючих дуг
-    setheading(45)
-    circle(15, 180)   # ліва маленька пухлина
-    setheading(90)
-    circle(25, 180)   # велика середня ліва
-    setheading(145)
-    circle(15, 180)   # центральна
-    setheading(3)
-    forward(90)
+    setheading(-90)
+    circle(25, 180)
+    left(30)
+    forward(50)
+    left(120)
+    forward(50)
     end_fill()
-    penup()
-    hideturtle()
