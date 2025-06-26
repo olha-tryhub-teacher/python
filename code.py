@@ -1,22 +1,20 @@
-from cross_zeroes import *
-from random import randint
-
-game = True
-player = randint(0, 1)
-
-field(xStart, yStart, size, "black")
-
-while game:
-    if player == 0:
-        movePlayer(player, zero)
-        player = 1
-    else:
-        movePlayer(player, cross)
-        player = 0
-    win = checkWin()
-    if win != -1:
-        if win == 1:
-            print("Виграв Хрестик!")
-        else:
-            print("Виграв Нулик!")
-        game = False
+def draw_cloud_contour():
+    penup()
+    goto(-30, -10)  # початкова позиція
+    pendown()
+    color("black","white")
+    width(4)
+    speed(3)
+    begin_fill()
+    # Малюємо хмаринку з 5 перекриваючих дуг
+    setheading(45)
+    circle(15, 180)   # ліва маленька пухлина
+    setheading(90)
+    circle(25, 180)   # велика середня ліва
+    setheading(145)
+    circle(15, 180)   # центральна
+    setheading(3)
+    forward(90)
+    end_fill()
+    penup()
+    hideturtle()
