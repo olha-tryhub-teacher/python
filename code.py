@@ -8,9 +8,9 @@ from launcher import ConnectWindow
 size = (1000, 800)
 bg = image.load("images/grass.png")
 bg = transform.scale(bg, size)
-
-player = image.load("images/cat.png")
-apple = image.load("images/apple.png")
+# 
+# player = image.load("images/cat.png")
+# apple = image.load("images/apple.png")
 
 win = ConnectWindow()
 win.mainloop()
@@ -55,11 +55,11 @@ Thread(target=receive_data, daemon=True).start()
 
 
 class Cell:
-    def __init__(self, x, y, r):
+    def __init__(self, x, y, r, c):
         self.x = x
         self.y = y
         self.radius = r
-        # self.color = c
+        self.color = c
 
     def check_collision(self, player_x, player_y, player_r):
         dx = self.x - player_x
@@ -68,7 +68,7 @@ class Cell:
 
 
 cells = [Cell(randint(-2000, 2000), randint(-2000, 2000), 10,
-              # (randint(0, 255), randint(0, 255), randint(0, 255))
+              (randint(0, 255), randint(0, 255), randint(0, 255))
               )
          for _ in range(300)]
 name_font = font.Font(None, 20)
@@ -89,14 +89,14 @@ while running:
         name_text = name_font.render(f'{p[4]}', 1, (0, 0, 0))
         window.blit(name_text, (sx, sy))
 
-    # draw.circle(window, (0, 255, 0), (size[0]//2, size[1]//2), int(my_player[2] * scale))
-    window.blit(
-        transform.scale(
-            player,
-            (my_player[2] * scale * 2, my_player[2] * scale * 2)
-        ),
-        (size[0]//2 - my_player[2] * scale,
-         size[1]//2 - my_player[2] * scale))
+    draw.circle(window, (0, 255, 0), (size[0]//2, size[1]//2), int(my_player[2] * scale))
+    # window.blit(
+    #     transform.scale(
+    #         player,
+    #         (my_player[2] * scale * 2, my_player[2] * scale * 2)
+    #     ),
+    #     (size[0]//2 - my_player[2] * scale,
+    #      size[1]//2 - my_player[2] * scale))
 
     to_remove = []
     for cell in cells:
@@ -106,8 +106,8 @@ while running:
         else:
             sx = int((cell.x - my_player[0]) * scale + size[0] // 2)
             sy = int((cell.y - my_player[1]) * scale + size[1] // 2)
-            # draw.circle(window, cell.color, (sx, sy), int(cell.radius * scale))
-            window.blit(transform.scale(apple, (cell.radius * 2, cell.radius * 2)), (sx, sy))
+            draw.circle(window, cell.color, (sx, sy), int(cell.radius * scale))
+            # window.blit(transform.scale(apple, (cell.radius * 2, cell.radius * 2)), (sx, sy))
 
     for cell in to_remove:
         cells.remove(cell)
