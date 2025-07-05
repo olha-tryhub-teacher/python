@@ -1,135 +1,120 @@
-from math import hypot
-from socket import socket, AF_INET, SOCK_STREAM
-from pygame import *
-from threading import Thread
-from random import randint
-from launcher import ConnectWindow
+# ---------- Label ----------
+class Label(GameObject):
+    def __init__(self, x, y, width, height, text='', fsize=36, text_color=TEXT_COLOR):
+        super().__init__(x, y, width, height, BACKGROUND)
+        self.text = text
+        self.fsize = fsize
+        self.text_color = text_color
 
-size = (1000, 800)
-bg = image.load("images/grass.png")
-bg = transform.scale(bg, size)
-# 
-# player = image.load("images/cat.png")
-# apple = image.load("images/apple.png")
-
-win = ConnectWindow()
-win.mainloop()
-
-name = win.name
-port = win.port
-host = win.host
-sock = socket(AF_INET, SOCK_STREAM)
-sock.connect((host, port))
-resv_my_data = sock.recv(64).decode().strip().strip("|").split(',')
-my_data = list(map(int, resv_my_data))
-my_id = my_data[0]
-my_player = my_data[1:]
-sock.setblocking(False)
-
-init()
-window = display.set_mode(size)
-clock = time.Clock()
-f = font.Font(None, 50)
-all_players = []
-running = True
-lose = False
+    def draw(self, surface):
+        super().draw(surface)
+        font = pygame.font.SysFont('verdana', self.fsize)
+        image = font.render(self.text, True, self.text_color)
+        surface.blit(image, (self.rect.x + 10, self.rect.y + 10))
 
 
-def receive_data():
-    global all_players, running, lose
-    while running:
-        try:
-            data = sock.recv(4096).decode().strip()
-            if data == "LOSE":
-                lose = True
-            elif data:
-                parts = data.strip('|').split('|')
+# ---------- Game Controller (Singleton Pattern) ----------
+class GameController:
+    _instance = None
 
-                all_players = [list(map(int, p.split(',')[:4])) + [p.split(',')[4]] for p in parts if
-                               len(p.split(',')) == 5]
-        except:
-            pass
+    # реалізує патерн Singleton — щоб у грі був лише один контролер,
+    # навіть якщо викликати GameController() кілька разів
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(GameController, cls).__new__(cls)
+        return cls._instance
 
+    def __init__(self):
+        self.window = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.clock = pygame.time.Clock()
+        self.running = True
+        self.init_game()
 
-Thread(target=receive_data, daemon=True).start()
+    def init_game(self):
+        self.platform = GameObject(200, 300, 100, 30, PLATFORM_COLOR)
+        self.ball = GameObject(160, 200, 20, 20, BALL_COLOR)
+        self.dx, self.dy = 3, 3
+        self.move_left = False
+        self.move_right = False
+        self.enemies = list(self.generate_enemies())
 
+    def generate_enemies(self):
+        for j in range(3):
+            y = 5 + j * 55
+            x = 5 + j * 27.5
+            for i in range(9 - j):
+                yield GameObject(x + i * 55, y, 50, 30, ENEMY_COLOR)
 
-class Cell:
-    def __init__(self, x, y, r, c):
-        self.x = x
-        self.y = y
-        self.radius = r
-        self.color = c
+    @log_event
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_a:
+                    self.move_left = True
+                elif event.key == pygame.K_d:
+                    self.move_right = True
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_a:
+                    self.move_left = False
+                elif event.key == pygame.K_d:
+                    self.move_right = False
 
-    def check_collision(self, player_x, player_y, player_r):
-        dx = self.x - player_x
-        dy = self.y - player_y
-        return hypot(dx, dy) <= self.radius + player_r
+    @log_event
+    def update(self):
+        if self.move_left:
+            self.platform.rect.x -= 5
+        if self.move_right:
+            self.platform.rect.x += 5
 
+        self.ball.rect.x += self.dx
+        self.ball.rect.y += self.dy
 
-cells = [Cell(randint(-2000, 2000), randint(-2000, 2000), 10,
-              (randint(0, 255), randint(0, 255), randint(0, 255))
-              )
-         for _ in range(300)]
-name_font = font.Font(None, 20)
-while running:
-    for e in event.get():
-        if e.type == QUIT:
-            running = False
+        if self.ball.rect.left <= 0 or self.ball.rect.right >= WIDTH:
+            self.dx *= -1
+        if self.ball.rect.top <= 0:
+            self.dy *= -1
 
-    # window.fill((255, 255, 255))
-    window.blit(bg, (0, 0))
-    scale = max(0.3, min(50 / my_player[2], 1.5))
+        if self.ball.collides_with(self.platform):
+            self.dy *= -1
 
-    for p in all_players:
-        if p[0] == my_id: continue
-        sx = int((p[1] - my_player[0]) * scale + size[0] // 2)
-        sy = int((p[2] - my_player[1]) * scale + size[1] // 2)
-        draw.circle(window, (255, 0, 0), (sx, sy), int(p[3] * scale))
-        name_text = name_font.render(f'{p[4]}', 1, (0, 0, 0))
-        window.blit(name_text, (sx, sy))
+        for enemy in self.enemies[:]:
+            if self.ball.collides_with(enemy):
+                self.enemies.remove(enemy)
+                self.dy *= -1
 
-    draw.circle(window, (0, 255, 0), (size[0]//2, size[1]//2), int(my_player[2] * scale))
-    # window.blit(
-    #     transform.scale(
-    #         player,
-    #         (my_player[2] * scale * 2, my_player[2] * scale * 2)
-    #     ),
-    #     (size[0]//2 - my_player[2] * scale,
-    #      size[1]//2 - my_player[2] * scale))
+    def draw_all(self):
+        self.window.fill(BACKGROUND)
+        self.platform.draw(self.window)
+        self.ball.draw(self.window)
+        for enemy in self.enemies:
+            enemy.draw(self.window)
 
-    to_remove = []
-    for cell in cells:
-        if cell.check_collision(my_player[0], my_player[1], my_player[2]):
-            to_remove.append(cell)
-            my_player[2] += int(cell.radius * 0.2)
-        else:
-            sx = int((cell.x - my_player[0]) * scale + size[0] // 2)
-            sy = int((cell.y - my_player[1]) * scale + size[1] // 2)
-            draw.circle(window, cell.color, (sx, sy), int(cell.radius * scale))
-            # window.blit(transform.scale(apple, (cell.radius * 2, cell.radius * 2)), (sx, sy))
+    def display_end_message(self, text, color):
+        label = Label(150, 150, 200, 100, text=text, fsize=48, text_color=color)
+        label.draw(self.window)
+        pygame.display.update()
+        pygame.time.wait(2000)
 
-    for cell in to_remove:
-        cells.remove(cell)
+    def check_end_conditions(self):
+        if self.ball.rect.top > HEIGHT:
+            self.display_end_message("YOU LOSE", (255, 0, 0))
+            self.running = False
+        elif not self.enemies:
+            self.display_end_message("YOU WIN", (0, 200, 0))
+            self.running = False
 
-    if lose:
-        t = f.render('U lose!', 1, (244, 0, 0))
-        window.blit(t, (400, 500))
+    def run(self):
+        while self.running:
+            self.handle_events()
+            self.update()
+            self.draw_all()
+            self.check_end_conditions()
+            pygame.display.update()
+            self.clock.tick(FPS)
 
-    display.update()
-    clock.tick(60)
-
-    if not lose:
-        keys = key.get_pressed()
-        if keys[K_w]: my_player[1] -= 15
-        if keys[K_s]: my_player[1] += 15
-        if keys[K_a]: my_player[0] -= 15
-        if keys[K_d]: my_player[0] += 15
-
-        try:
-            msg = f"{my_id},{my_player[0]},{my_player[1]},{my_player[2]},{name}"
-            sock.send(msg.encode())
-        except:
-            pass
-
-quit()
+# ---------- Entry Point ----------
+if __name__ == '__main__':
+    game = GameController()
+    game.run()
