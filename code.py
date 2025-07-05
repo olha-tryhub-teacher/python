@@ -1,3 +1,45 @@
+import pygame
+import functools
+import time
+from abc import ABC, abstractmethod
+
+pygame.init()
+
+# ---------- Decorator for logging ----------
+def log_event(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        print(f"[{time.strftime('%H:%M:%S')}] Calling: {func.__name__}")
+        return func(*args, **kwargs)
+    return wrapper
+
+# ---------- Constants ----------
+WIDTH, HEIGHT = 500, 500
+FPS = 40
+BACKGROUND = (200, 255, 255)
+PLATFORM_COLOR = (100, 100, 255)
+BALL_COLOR = (255, 50, 50)
+ENEMY_COLOR = (0, 150, 0)
+TEXT_COLOR = (0, 0, 0)
+
+# ---------- Abstract Drawable ----------
+class Drawable(ABC):
+    @abstractmethod
+    def draw(self, surface):
+        pass
+
+# ---------- GameObject Base Class ----------
+class GameObject(Drawable):
+    def __init__(self, x, y, width, height, color):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.color = color
+
+    def draw(self, surface):
+        pygame.draw.rect(surface, self.color, self.rect)
+
+    def collides_with(self, other):
+        return self.rect.colliderect(other.rect)
+
 # ---------- Label ----------
 class Label(GameObject):
     def __init__(self, x, y, width, height, text='', fsize=36, text_color=TEXT_COLOR):
@@ -38,6 +80,7 @@ class GameController:
         self.move_right = False
         self.enemies = list(self.generate_enemies())
 
+    @log_event
     def generate_enemies(self):
         for j in range(3):
             y = 5 + j * 55
