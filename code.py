@@ -1,163 +1,189 @@
-import pygame
-import functools
-import time
-from abc import ABC, abstractmethod
+from turtle import *
 
-pygame.init()
-
-# ---------- Decorator for logging ----------
-def log_event(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        print(f"[{time.strftime('%H:%M:%S')}] Calling: {func.__name__}")
-        return func(*args, **kwargs)
-    return wrapper
-
-# ---------- Constants ----------
-WIDTH, HEIGHT = 500, 500
-FPS = 40
-BACKGROUND = (200, 255, 255)
-PLATFORM_COLOR = (100, 100, 255)
-BALL_COLOR = (255, 50, 50)
-ENEMY_COLOR = (0, 150, 0)
-TEXT_COLOR = (0, 0, 0)
-
-# ---------- Abstract Drawable ----------
-class Drawable(ABC):
-    @abstractmethod
-    def draw(self, surface):
-        pass
-
-# ---------- GameObject Base Class ----------
-class GameObject(Drawable):
-    def __init__(self, x, y, width, height, color):
-        self.rect = pygame.Rect(x, y, width, height)
-        self.color = color
-
-    def draw(self, surface):
-        pygame.draw.rect(surface, self.color, self.rect)
-
-    def collides_with(self, other):
-        return self.rect.colliderect(other.rect)
-
-# ---------- Label ----------
-class Label(GameObject):
-    def __init__(self, x, y, width, height, text='', fsize=36, text_color=TEXT_COLOR):
-        super().__init__(x, y, width, height, BACKGROUND)
-        self.text = text
-        self.fsize = fsize
-        self.text_color = text_color
-
-    def draw(self, surface):
-        super().draw(surface)
-        font = pygame.font.SysFont('verdana', self.fsize)
-        image = font.render(self.text, True, self.text_color)
-        surface.blit(image, (self.rect.x + 10, self.rect.y + 10))
+def start(x, y):
+    penup()
+    goto(x, y)
+    pendown()
 
 
-# ---------- Game Controller (Singleton Pattern) ----------
-class GameController:
-    _instance = None
+def square(a, col):
+    color(col)
+    for i in range(4):
+        fd(a)
+        lt(90)
 
-    # реалізує патерн Singleton — щоб у грі був лише один контролер,
-    # навіть якщо викликати GameController() кілька разів
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(GameController, cls).__new__(cls)
-        return cls._instance
 
-    def __init__(self):
-        self.window = pygame.display.set_mode((WIDTH, HEIGHT))
-        self.clock = pygame.time.Clock()
-        self.running = True
-        self.init_game()
+def rectangle(a, b, col):
+    color(col)
+    for i in range(2):
+        fd(a)
+        lt(90)
+        fd(b)
+        lt(90)
 
-    def init_game(self):
-        self.platform = GameObject(200, 300, 100, 30, PLATFORM_COLOR)
-        self.ball = GameObject(160, 200, 20, 20, BALL_COLOR)
-        self.dx, self.dy = 3, 3
-        self.move_left = False
-        self.move_right = False
-        self.enemies = list(self.generate_enemies())
 
-    @log_event
-    def generate_enemies(self):
+def triangle(a, col):
+    color(col)
+    for i in range(3):
+        fd(a)
+        lt(120)
+
+
+def parallelogram(a, b, col):
+    color(col)
+    for i in range(2):
+        fd(a)
+        lt(125)
+        fd(b)
+        lt(55)
+
+
+def polygon(a, n, col):
+    color(col)
+    angel = 360 / n
+    for i in range(n):
+        fd(a)
+        lt(angel)
+
+
+def square_fill(a, col):
+    color(col)
+    begin_fill()
+    for i in range(4):
+        fd(a)
+        lt(90)
+    end_fill()
+
+
+def rectangle_fill(a, b, col):
+    color(col)
+    begin_fill()
+    for i in range(2):
+        fd(a)
+        lt(90)
+        fd(b)
+        lt(90)
+    end_fill()
+
+
+def triangle_fill(a, col):
+    color(col)
+    begin_fill()
+    for i in range(3):
+        fd(a)
+        lt(120)
+    end_fill()
+
+
+def parallelogram_fill(a, b, col):
+    color(col)
+    begin_fill()
+    for i in range(2):
+        fd(a)
+        lt(125)
+        fd(b)
+        lt(55)
+    end_fill()
+
+
+def polygon_fill(a, n, col):
+    color(col)
+    angel = 360 / n
+    begin_fill()
+    for i in range(n):
+        fd(a)
+        lt(angel)
+    end_fill()
+
+
+def circle_fill(a, col):
+    color(col)
+    begin_fill()
+    circle(a)
+    end_fill()
+
+
+size = 100
+xStart = -150
+yStart = 150
+
+xCor = [xStart + i * size for i in range(3)]  # x для 1, 2, 3 клітинки
+yCor = [yStart - i * size for i in range(3)]  # y для верхнього, середнього, нижнього ряду
+
+playingField = [-1, -1, -1, -1, -1, -1, -1, -1, -1]
+
+
+def field(xStart, yStart, size, col):
+    width(4)
+    x, y = xStart, yStart
+    for i in range(3):
         for j in range(3):
-            y = 5 + j * 55
-            x = 5 + j * 27.5
-            for i in range(9 - j):
-                yield GameObject(x + i * 55, y, 50, 30, ENEMY_COLOR)
+            start(x, y)
+            square(size, col)
+            x += size
+        x = xStart
+        y -= size
 
-    @log_event
-    def handle_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_a:
-                    self.move_left = True
-                elif event.key == pygame.K_d:
-                    self.move_right = True
-            elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_a:
-                    self.move_left = False
-                elif event.key == pygame.K_d:
-                    self.move_right = False
 
-    @log_event
-    def update(self):
-        if self.move_left:
-            self.platform.rect.x -= 5
-        if self.move_right:
-            self.platform.rect.x += 5
+def cross(x, y, size, col):
+    color(col)
+    start(x, y)
+    width(4)
+    setheading(45)
+    forward(1.4 * size)
+    start(x + size, y)
+    setheading(135)
+    forward(1.4 * size)
 
-        self.ball.rect.x += self.dx
-        self.ball.rect.y += self.dy
 
-        if self.ball.rect.left <= 0 or self.ball.rect.right >= WIDTH:
-            self.dx *= -1
-        if self.ball.rect.top <= 0:
-            self.dy *= -1
+def zero(x, y, size, col):
+    start(x + size // 2, y)
+    width(5)
+    setheading(0)
+    color(col)
+    circle(size // 2)
 
-        if self.ball.collides_with(self.platform):
-            self.dy *= -1
 
-        for enemy in self.enemies[:]:
-            if self.ball.collides_with(enemy):
-                self.enemies.remove(enemy)
-                self.dy *= -1
+def movePlayer(player, draw_function):
+    if player == 0:
+        print("Ходить нулик. Введіть номер клiтинки:")
+        c = "#9b59b6"
+    else:
+        print("Ходить хрестик. Введіть номер клiтинки:")
+        c = "#e74c3c"
+    cell = int(input())
 
-    def draw_all(self):
-        self.window.fill(BACKGROUND)
-        self.platform.draw(self.window)
-        self.ball.draw(self.window)
-        for enemy in self.enemies:
-            enemy.draw(self.window)
+    while playingField[cell - 1] != -1:
+        print("Ця клітинка вже зайняти. Оберіть іншу!")
+        cell = int(input())
+    cell = cell - 1
+    i, j = cell % 3, cell // 3
+    x, y = xCor[i], yCor[j]
+    draw_function(x, y, size, c)
+    playingField[cell] = player
 
-    def display_end_message(self, text, color):
-        label = Label(150, 150, 200, 100, text=text, fsize=48, text_color=color)
-        label.draw(self.window)
-        pygame.display.update()
-        pygame.time.wait(2000)
+def checkCells(n1, n2, n3):
+    if (playingField[n1] == playingField[n2] and playingField[n2] == playingField[n3]):
+        return playingField[n1]
+    else:
+        return -1
 
-    def check_end_conditions(self):
-        if self.ball.rect.top > HEIGHT:
-            self.display_end_message("YOU LOSE", (255, 0, 0))
-            self.running = False
-        elif not self.enemies:
-            self.display_end_message("YOU WIN", (0, 200, 0))
-            self.running = False
-
-    def run(self):
-        while self.running:
-            self.handle_events()
-            self.update()
-            self.draw_all()
-            self.check_end_conditions()
-            pygame.display.update()
-            self.clock.tick(FPS)
-
-# ---------- Entry Point ----------
-if __name__ == '__main__':
-    game = GameController()
-    game.run()
+def checkWin():
+    if checkCells(0, 1, 2) != -1:
+        return checkCells(0, 1, 2)
+    elif checkCells(3, 4, 5) != -1:
+        return checkCells(3, 4, 5)
+    elif checkCells(6, 7, 8) != -1:
+        return checkCells(6, 7, 8)
+    elif checkCells(0, 3, 6) != -1:
+        return checkCells(0, 3, 6)
+    elif checkCells(1, 4, 7) != -1:
+        return checkCells(1, 4, 7)
+    elif checkCells(2, 5, 8) != -1:
+        return checkCells(2, 5, 8)
+    elif checkCells(0, 4, 8) != -1:
+        return checkCells(0, 4, 8)
+    elif checkCells(2, 4, 6) != -1:
+        return checkCells(2, 4, 6)
+    else:
+        return -1
