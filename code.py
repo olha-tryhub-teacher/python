@@ -1,38 +1,110 @@
+# підключи свій модуль art
 from turtle import *
-from gallows import *
-from art import *
-from random import choice
 
-words = ["папуга", "школа", "карета", "відео", "намисто","шоколадка"]
-word = choice(words)
-countRight = 0
-countWrong = 0
-xWrong, yWrong = -170, 50
 
-# setup(1000, 800)
+def parallelogram(a, b, col):
+    color(col)
+    for i in range(2):
+        fd(a)
+        lt(125)
+        fd(b)
+        lt(55)
 
-writeAsk(word)
 
-while True:
-    letter = input("Введіть літеру:")
-    if letter in word:
-        c = writeRight(letter, word)
-        countRight += c
-    else:
-        penup()
-        goto(xWrong, yWrong)
-        pendown()
-        if xWrong < 50:
-            xWrong += 45
-        else:
-            xWrong, yWrong = -170, yWrong - 45
-        writeWrong(letter)
-        countWrong += 1
-        drawGalows(countWrong)
+def polygon(a, n, col):
+    color(col)
+    angel = 360 / n
+    for i in range(n):
+        fd(a)
+        lt(angel)
 
-    if countWrong == 12:
-        print("Lose")
-        break
-    if countRight == len(word):
-        print("Win")
-        break
+
+def square_fill(a, col):
+    color(col)
+    begin_fill()
+    for i in range(4):
+        fd(a)
+        lt(90)
+    end_fill()
+
+
+# def circle(a, col):
+#     color(col)
+#     circle(a)
+
+
+def rectangle_fill(a, b, col):
+    color(col)
+    begin_fill()
+    for i in range(2):
+        fd(a)
+        lt(90)
+        fd(b)
+        lt(90)
+    end_fill()
+
+
+def triangle_fill(a, col):
+    color(col)
+    begin_fill()
+    for i in range(3):
+        fd(a)
+        lt(120)
+    end_fill()
+
+
+def parallelogram_fill(a, b, col):
+    color(col)
+    begin_fill()
+    for i in range(2):
+        fd(a)
+        lt(125)
+        fd(b)
+        lt(55)
+    end_fill()
+
+
+def polygon_fill(a, n, col):
+    color(col)
+    angel = 360 / n
+    begin_fill()
+    for i in range(n):
+        fd(a)
+        lt(angel)
+    end_fill()
+
+
+def circle_fill(a, col):
+    color(col)
+    begin_fill()
+    circle(a)
+    end_fill()
+
+
+def start(x, y):
+    penup()
+    goto(x, y)
+    pendown()
+
+
+def square(a, col):
+    color(col)
+    for i in range(4):
+        fd(a)
+        lt(90)
+
+
+def rectangle(a, b, col):
+    color(col)
+    for i in range(2):
+        fd(a)
+        lt(90)
+        fd(b)
+        lt(90)
+
+
+def triangle(a, col):
+    color(col)
+    for i in range(3):
+        fd(a)
+        lt(120)
