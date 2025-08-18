@@ -23,3 +23,15 @@ def save_users(users: dict):
     """Зберігаємо користувачів у JSON-файл"""
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(users, f, ensure_ascii=False, indent=2)
+
+# ---------------------------------------------------
+# Модель користувача
+class User(BaseModel):
+    login: str
+    first_name: str
+    last_name: str
+    birth_year: int
+
+
+# ---------------------------------------------------
+# 1. Додавання нового користувача
