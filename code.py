@@ -1,110 +1,25 @@
-# підключи свій модуль art
-from turtle import *
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
+from pydantic import BaseModel
+import json
+import os
+
+app = FastAPI()
+
+DATA_FILE = "users.json"
 
 
-def parallelogram(a, b, col):
-    color(col)
-    for i in range(2):
-        fd(a)
-        lt(125)
-        fd(b)
-        lt(55)
+# ---------------------------------------------------
+# Допоміжні функції для роботи з файлом
+def load_users():
+    """Завантажуємо користувачів з JSON-файлу"""
+    if not os.path.exists(DATA_FILE):
+        return {}
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
-def polygon(a, n, col):
-    color(col)
-    angel = 360 / n
-    for i in range(n):
-        fd(a)
-        lt(angel)
-
-
-def square_fill(a, col):
-    color(col)
-    begin_fill()
-    for i in range(4):
-        fd(a)
-        lt(90)
-    end_fill()
-
-
-# def circle(a, col):
-#     color(col)
-#     circle(a)
-
-
-def rectangle_fill(a, b, col):
-    color(col)
-    begin_fill()
-    for i in range(2):
-        fd(a)
-        lt(90)
-        fd(b)
-        lt(90)
-    end_fill()
-
-
-def triangle_fill(a, col):
-    color(col)
-    begin_fill()
-    for i in range(3):
-        fd(a)
-        lt(120)
-    end_fill()
-
-
-def parallelogram_fill(a, b, col):
-    color(col)
-    begin_fill()
-    for i in range(2):
-        fd(a)
-        lt(125)
-        fd(b)
-        lt(55)
-    end_fill()
-
-
-def polygon_fill(a, n, col):
-    color(col)
-    angel = 360 / n
-    begin_fill()
-    for i in range(n):
-        fd(a)
-        lt(angel)
-    end_fill()
-
-
-def circle_fill(a, col):
-    color(col)
-    begin_fill()
-    circle(a)
-    end_fill()
-
-
-def start(x, y):
-    penup()
-    goto(x, y)
-    pendown()
-
-
-def square(a, col):
-    color(col)
-    for i in range(4):
-        fd(a)
-        lt(90)
-
-
-def rectangle(a, b, col):
-    color(col)
-    for i in range(2):
-        fd(a)
-        lt(90)
-        fd(b)
-        lt(90)
-
-
-def triangle(a, col):
-    color(col)
-    for i in range(3):
-        fd(a)
-        lt(120)
+def save_users(users: dict):
+    """Зберігаємо користувачів у JSON-файл"""
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(users, f, ensure_ascii=False, indent=2)
