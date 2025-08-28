@@ -1,29 +1,14 @@
-from turtle import *
-from time import sleep
-from random import randint, choice, random
-
-
-def create_t(x, y, form, col):
-    t = Turtle()
-    t.penup()
-    t.goto(x, y)
-    t.shape(form)
-    t.color(col)
-    return t
-
-
-t_list = []
-forms = ['triangle', 'square']
-colors = ['red', 'yellow', 'green', 'blue']
-
-for i in range(20):
-    t1 = create_t(randint(-200, 200), randint(-200, 200), choice(forms), choice(colors))
-    t_list.append(t1)
-
-for i in range(50):
-    for t in t_list:
-        t.hideturtle()
-    sleep(randint(1,5)/10)
-    for t in t_list:
-        t.showturtle()
-    sleep(randint(1,5)/10)
+# побудувати трасу, де є старт та фініш
+def track():
+    tr = create_turtle(-150, -150, "triangle", "green")
+    tr.penup()
+    tr.setheading(90)
+    tr.pendown()
+    tr.forward(300)
+    tr.color("red")
+    tr.width(20)
+    tr.penup()
+    tr.goto(300, -150)
+    tr.pendown()
+    tr.setheading(90)
+    tr.forward(300)
