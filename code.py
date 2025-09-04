@@ -1,15 +1,73 @@
-def write_name1(x, y):
-    t1.write("t1", font=("Arial", 18))
+# ваш код
+from turtle import *
+from random import randint
+
+hideturtle()
 
 
-def write_name2(x, y):
-    t2.write("t2", font=("Arial", 18))
+def create_t(x, y, h, col):
+    t = Turtle()
+    t.color(col)
+    t.shape("turtle")
+    t.setheading(h)
+    t.penup()
+    t.goto(x, y)
+    t.pendown()
+    return t
 
 
-def write_name3(x, y):
-    t3.write("t3", font=("Arial", 18))
+# 1.Ігрове поле
+screen = getscreen()
+screen.bgcolor("yellow")
+
+# 2.Лейбли-лічильник
+click = create_t(200, 100, 0, "blue")
+click.count = 0
+click.hideturtle()
+click.write(f"Click: {click.count}", font=("Arial", 24))
+
+# те саме тільки раннер
+runner = create_t(200, 150, 0, "red")
+runner.count = 0
+runner.hideturtle()
+runner.write(f"Runner: {runner.count}", font=("Arial", 24))
+
+# 3.Черепашки-втікачки
+# 3.1 створити черепашок
+t1 = create_t(0, 0, 0, "pink")
 
 
-t1.onclick(write_name1)
-t2.onclick(write_name2)
-t3.onclick(write_name3)
+# 3.2 функції-обробники кліку
+def click1(x, y):
+    t1.lt(randint(30, 200))
+    click.count += 1
+    click.clear()
+    click.write(f"Click: {click.count}", font=("Arial", 24))
+
+
+# 3.3 підписка на подію клік по черепашках
+t1.onclick(click1)
+
+# 4. Ігровий цикл
+while click.count < 20 and runner.count < 4:
+    if abs(t1.xcor()) < 200 and abs(t1.ycor()) < 200:
+        t1.forward(2)
+    else:
+        runner.count += 1
+        runner.clear()
+        runner.write(f"Runner: {runner.count}", font=("Arial", 24))
+
+
+# 5. Переврка виграшу/програшу
+if click.count >= 20:
+    click.penup()
+    click.goto(0, 0)
+    click.write("You winn", font=("Arial", 40))
+# те саме тільки раннер
+if runner.count >= 4:
+    runner.penup()
+    runner.goto(0, 0)
+    runner.write("You lose", font=("Arial", 40))
+
+
+done()
