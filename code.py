@@ -1,14 +1,15 @@
-# побудувати трасу, де є старт та фініш
-def track():
-    tr = create_turtle(-150, -150, "triangle", "green")
-    tr.penup()
-    tr.setheading(90)
-    tr.pendown()
-    tr.forward(300)
-    tr.color("red")
-    tr.width(20)
-    tr.penup()
-    tr.goto(300, -150)
-    tr.pendown()
-    tr.setheading(90)
-    tr.forward(300)
+def write_name1(x, y):
+    t1.write("t1", font=("Arial", 18))
+
+
+def write_name2(x, y):
+    t2.write("t2", font=("Arial", 18))
+
+
+def write_name3(x, y):
+    t3.write("t3", font=("Arial", 18))
+
+
+t1.onclick(write_name1)
+t2.onclick(write_name2)
+t3.onclick(write_name3)
