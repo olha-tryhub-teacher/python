@@ -34,10 +34,7 @@ runner.write(f"Runner: {runner.count}", font=("Arial", 24))
 
 # 3.Черепашки-втікачки
 # 3.1 створити черепашок
-t1 = create_t(0, 0, 0, "medium slate blue")
-t2 = create_t(0, 0, 90, "dodger blue")
-t3 = create_t(0, 0, 180, "lime")
-t4 = create_t(0, 0, 270, "deep pink")
+t1 = create_t(0, 0, 0, "pink")
 
 
 # 3.2 функції-обробники кліку
@@ -48,30 +45,8 @@ def click1(x, y):
     click.write(f"Click: {click.count}", font=("Arial", 24))
 
 
-def click2(x, y):
-    t2.lt(randint(30, 200))
-    click.count += 1
-    click.clear()
-    click.write(f"Click: {click.count}", font=("Arial", 24))
-    
-def click3(x, y):
-    t3.lt(randint(30, 200))
-    click.count += 1
-    click.clear()
-    click.write(f"Click: {click.count}", font=("Arial", 24))
-    
-    
-def click4(x, y):
-    t4.lt(randint(30, 200))
-    click.count += 1
-    click.clear()
-    click.write(f"Click: {click.count}", font=("Arial", 24))
-
 # 3.3 підписка на подію клік по черепашках
 t1.onclick(click1)
-t2.onclick(click2)
-t3.onclick(click3)
-t4.onclick(click4)
 
 # 4. Ігровий цикл
 while click.count < 20 and runner.count < 4:
