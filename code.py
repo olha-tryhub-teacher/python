@@ -1,65 +1,35 @@
-# 4. Яблука
-# 4.1 Список яблук
-apples = []
-colors = ["red", "gold", "blue"]
+from random import randint, choice  # randint - випадкове число, choice - випадковий елемент зі списку
+from turtle import *  # імпортуємо бібліотеку turtle для графіки
+
+screen = Screen()  # створюємо екран для малювання
+ball = Turtle()  # створюємо "черепашку", яка буде кулькою
+ball.shape("circle")  # задаємо форму - коло
+ball.speed(0)  # швидкість малювання (0 - максимально швидко)
+
+# список кольорів для кульки
+colors = ["red", "blue", "green", "yellow", "orange", "pink"]
+
+ball.setheading(270)  # напрямок руху кульки (270 градусів = вниз)
 
 
-# 4.2 Функція появи нового яблука
-def spawn_a():
-    a = create_t(randint(-130, 130), 150, "circle", choice(colors))
-    apples.append(a)
+def start_ball():
+    """Функція створює нову кульку у випадковому місці вгорі"""
+    ball.penup()  # підняти "перо", щоб не малювало лінії
+    ball.goto(randint(-300, 300), 180)  # ставимо кульку у випадкову позицію по x, завжди вгорі (y=180)
+    ball.color(choice(colors))  # випадковий колір кульки
+    ball.pendown()  # опустити "перо", якщо потрібно малювати
 
 
-# 4.3 Функця руху яблука
-def move(a):
-    a.fd(5)
+def move_ball():
+    """Функція рухає кульку вниз і перевіряє, чи не вийшла вона за нижню межу"""
+    ball.forward(10)  # рух вперед (у нашому випадку вниз, бо heading=270)
+    if ball.ycor() < -180:  # якщо кулька дійшла до низу екрана
+        start_ball()  # запускаємо її знову зверху
+    screen.ontimer(move_ball, 10)  # 0.01sec                 # повторюємо функцію через 100 мс (анімація)
 
 
-# 4.4 Функція перевірки яблука, що впало
-def check_miss(a):
-    if a.ycor() <= - 150:
-        a.ht()
-        apples.remove(a)
-        update_count(miss, "Miss")
+# запускаємо гру
+start_ball()  # створюємо першу кульку
+move_ball()  # запускаємо її рух
 
-
-# 4.5 Функція спійманого яблука
-def check_catch(a):
-    x, y = plt.xcor(), plt.ycor()
-    if a.distance(x, y) <= 10:
-        a.ht()
-        apples.remove(a)
-        update_count(catch, "Catch")
-
-
-# 5. Функція перевірка виграшу/програшу
-def check_end_game():
-    if miss.count >= 3:
-        miss.goto(0, 0)
-        miss.write("You lose", font=("Arial", 14))
-        return True
-    if catch.count >= 10:
-        catch.goto(0, 0)
-        catch.write("You win", font=("Arial", 14))
-        return True
-    return False
-
-
-# 6. Функція гри
-def game():
-    if randint(1, 30) == 3:
-        spawn_a()
-    for a in apples:
-        move(a)
-        check_miss(a)
-        check_catch(a)
-    end = check_end_game()
-    if not end:
-        screen.ontimer(game, 50)
-
-
-# Запускаємо все
-update_count(miss, "Miss")
-update_count(catch, "Catch")
-spawn_a()
-game()
+done()
