@@ -1,35 +1,130 @@
-from random import randint, choice  # randint - випадкове число, choice - випадковий елемент зі списку
-from turtle import *  # імпортуємо бібліотеку turtle для графіки
+from turtle import *
+from random import randint, choice
 
-screen = Screen()  # створюємо екран для малювання
-ball = Turtle()  # створюємо "черепашку", яка буде кулькою
-ball.shape("circle")  # задаємо форму - коло
-ball.speed(0)  # швидкість малювання (0 - максимально швидко)
+screen = getscreen()
 
-# список кольорів для кульки
-colors = ["red", "blue", "green", "yellow", "orange", "pink"]
-
-ball.setheading(270)  # напрямок руху кульки (270 градусів = вниз)
+hideturtle()
 
 
-def start_ball():
-    """Функція створює нову кульку у випадковому місці вгорі"""
-    ball.penup()  # підняти "перо", щоб не малювало лінії
-    ball.goto(randint(-300, 300), 180)  # ставимо кульку у випадкову позицію по x, завжди вгорі (y=180)
-    ball.color(choice(colors))  # випадковий колір кульки
-    ball.pendown()  # опустити "перо", якщо потрібно малювати
+def create_t(x, y, sh, col):
+    t = Turtle()
+    t.speed(0)
+    t.penup()
+    t.color(col)
+    t.shape(sh)
+    t.setheading(270)
+    t.goto(x, y)
+    return t
 
 
-def move_ball():
-    """Функція рухає кульку вниз і перевіряє, чи не вийшла вона за нижню межу"""
-    ball.forward(10)  # рух вперед (у нашому випадку вниз, бо heading=270)
-    if ball.ycor() < -180:  # якщо кулька дійшла до низу екрана
-        start_ball()  # запускаємо її знову зверху
-    screen.ontimer(move_ball, 10)  # 0.01sec                 # повторюємо функцію через 100 мс (анімація)
+# ваш код
+# 1. Ігрове поле
+screen.bgcolor("black")
+pole = create_t(-150, 150, "turtle", "white")
+pole.ht()
+pole.begin_fill()
+for _ in range(4):
+    pole.fd(300)
+    pole.lt(90)
+pole.end_fill()
+
+# 2. Лейбли - лічильники
+# 2.1 Створити лейбли
+miss = create_t(-150, 160, "turtle", "red")
+miss.count = -1
+miss.ht()
+catch = create_t(70, 160, "turtle", "green")
+catch.count = -1
+catch.ht()
 
 
-# запускаємо гру
-start_ball()  # створюємо першу кульку
-move_ball()  # запускаємо її рух
+# 2.2 Функція що оновлює напис
+def update_count(label, txt):
+    label.count += 1
+    label.clear()
+    label.write(f"{txt} : {label.count}", font=("Arial", 16))
 
-done()
+
+# 3.Платформа-гравець
+# 3.1 Створити гравця
+plt = create_t(0, -130, "square", "violet")
+
+
+# 3.2 Функції руху праворчу-ліворуч
+def move_l():
+    plt.setheading(180)
+    plt.fd(10)
+
+def move_r():
+    plt.setheading(0)
+    plt.fd(10)
+
+# 3.3 Підписка на події клавіші
+screen.onkey(move_l, "Left")
+screen.onkey(move_r, "Right")
+screen.listen()
+# 4. Яблука
+# 4.1 Список яблук
+apples = []
+colors = ["red", "gold", "blue"]
+
+
+# 4.2 Функція появи нового яблука
+def spawn_a():
+    a = create_t(randint(-130, 130), 150, "circle", choice(colors))
+    apples.append(a)
+
+
+# 4.3 Функця руху яблука
+def move(a):
+    a.fd(5)
+
+
+# 4.4 Функція перевірки яблука, що впало
+def check_miss(a):
+    if a.ycor() <= -150:
+        a.ht()
+        apples.remove(a)
+        update_count(miss, "Miss")
+
+
+# 4.5 Функція спійманого яблука
+def check_catch(a):
+    x, y = plt.xcor(), plt.ycor()
+    if a.distance(x, y) <= 10:
+        a.ht()
+        apples.remove(a)
+        update_count(catch, "Catch")
+
+
+# 5. Функція перевірка виграшу/програшу
+def check_end_game():
+    if miss.count >= 3:
+        miss.goto(0, 0)
+        miss.write("You lose", font=("Arial", 14))
+        return True
+    if catch.count >= 10:
+        catch.goto(0, 0)
+        catch.write("You win", font=("Arial", 14))
+        return True
+    return False
+
+
+# 6. Функція гри
+def game():
+    if randint(1, 30) == 3:
+        spawn_a()
+    for a in apples:
+        move(a)
+        check_miss(a)
+        check_catch(a)
+    end = check_end_game()
+    if not end:
+        screen.ontimer(game, 50)
+
+
+# Запускаємо все
+update_count(miss, "Miss")
+update_count(catch, "Catch")
+spawn_a()
+game()
