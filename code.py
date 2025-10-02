@@ -1,53 +1,35 @@
-import turtle
+# Оголошення класу Animal (Тварина)
+class Animal:
+    # Метод ініціалізації — встановлює ім'я та початковий рівень енергії тварини
+    def __init__(self, name, energy):
+        self.name = name        # Ім'я тварини
+        self.energy = energy    # Поточний рівень енергії тварини
 
 
-# Оголошення класу Painter (Малювальник)
-class Painter:
-    # Конструктор — створює об'єкт turtle, який ховається в приватному атрибуті __t
-    def __init__(self):
-        self.__t = turtle.Turtle()  # Створюється черепашка для малювання
+    # Метод eat — тварина їсть їжу, додаючи енергію від їжі до своєї
+    def eat(self, food):
+        self.energy += food.energy     # Збільшуємо енергію тварини на енергію їжі
+        print(f"Animal {self.name} eat {food.name}. Energy: {self.energy}")
+        # Виводимо повідомлення про те, що тварина з'їла їжу і показуємо оновлений рівень енергії
 
 
-    # Метод для переміщення черепашки в координати (x, y)
-    def goto(self, x, y):
-        self.__t.goto(x, y)
+# Оголошення класу Food (Їжа)
+class Food:
+    # Метод ініціалізації — встановлює назву їжі та її енергетичну цінність
+    def __init__(self, name, energy):
+        self.name = name        # Назва їжі
+        self.energy = energy    # Кількість енергії, яку дає їжа
 
 
-    # Метод для зміни кольору пера та заливки
-    def set_color(self, color):
-        self.__t.color(color)
+# Створення об'єкта dog класу Animal з ім'ям "Rex" та енергією 34
+dog = Animal("Rex", 34)
 
+# Створення об'єктів їжі
+food1 = Food("meat", 55)   # М'ясо дає 55 одиниць енергії
+food2 = Food("milk", 23)   # Молоко дає 23 одиниці енергії
 
-    # Метод для встановлення напряму (в градусах)
-    def heading(self, h):
-        self.__t.setheading(h)
+# Тварина їсть м'ясо
+dog.eat(food1)
 
-
-    # Метод для руху вперед на певну довжину
-    def forward(self, length):
-        self.__t.fd(length)
-
-
-    # Метод для малювання прямокутника із заданою шириною, висотою та кольором
-    def draw_rect(self, width, height, color):
-        self.set_color(color)           # Встановити колір
-        self.__t.begin_fill()           # Почати заливку
-        for _ in range(2):              # Двічі пройти по двом сторонам прямокутника
-            self.forward(width)         # Малюємо ширину
-            self.__t.right(90)             # Повертаємось на 90 градусів вправо
-            self.forward(height)        # Малюємо висоту
-            self.__t.right(90)             # Повертаємось знову
-        self.__t.end_fill()             # Завершуємо заливку
-
-
-    # Метод для малювання круга з центром у (x, y), певним радіусом і кольором
-    def draw_circle(self, x, y, radius, color):
-        self.set_color(color)           # Встановити колір
-        self.goto(x, y)                 # Переміститись у центр круга
-        self.__t.begin_fill()           # Почати заливку
-        self.__t.circle(radius)         # Намалювати круг заданого радіуса
-        self.__t.end_fill()             # Завершити заливку
-
-p1 = Painter()
-p1.draw_circle(100, 100, 30, "yellow")
-turtle.done()
+# Тварина їсть молоко
+dog.eat(food2)
