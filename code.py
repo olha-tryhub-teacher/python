@@ -1,219 +1,128 @@
 from turtle import *
-from time import sleep
-
-screen = getscreen()
-screen.bgcolor("white")
-# screen.tracer(0)
-hideturtle()
-pu()
-goto(-200, 150)
 
 
-def info(text, col, bg):
-    """Для відображення інформації"""
-    screen.bgcolor(bg)
-    color(col)
-    write(text, font=("Arial", 28, "normal"))
-    # update()
-    sleep(1)
-    clear()
-    screen.bgcolor("white")
-    # update()
+# --- Налаштування екрану ---
+screen = Screen()
+screen.bgcolor("lightblue")
 
 
-class Player(Turtle):
-    errors = 0
+# --- Базовий клас для всіх спрайтів ---
+class Sprite(Turtle):
+    def __init__(self, x, y, col, sh):
+        super().__init__()
+        # t = Turtle()
+        self.color(col)
+        self.shape(sh)
+        self.go_to(x, y)
 
-    def __init__(self, x, y, game):
-        super().__init__(shape="square")
-        self.color("green")
-        self.speed(0)
+
+    # Переміщення спрайта без малювання
+    def go_to(self, x, y):
         self.penup()
         self.goto(x, y)
-        self.game = game
 
-        screen.onkey(self.__move_left, "Left")
-        screen.onkey(self.__move_right, "Right")
-        screen.onkey(self.__move_up, "Up")
-        screen.onkey(self.__move_down, "Down")
 
-    def __move_left(self):
+    # Перевірка зіткнення з іншим об’єктом
+    def touch_t(self, t):
+        if abs(self.xcor() - t.xcor()) < 20 and abs(self.ycor() - t.ycor()) < 20:
+            return True
+        return False
+
+
+# --- Клас гравця (керується з клавіатури) ---
+class Player(Sprite):
+    def __init__(self, x, y, col, sh, step_size):
+        super().__init__(x, y, col, sh)
+        self.step_size = step_size
+
+
+        # Прив'язка клавіш до функцій руху
+        screen.onkey(self.move_left, "Left")
+        screen.onkey(self.move_right, "Right")
+        screen.onkey(self.move_down, "Down")
+        screen.onkey(self.move_up, "Up")
+        screen.listen()
+
+
+    # Рух вліво
+    def move_left(self):
         self.setheading(180)
-        self.forward(10)
-        self.check_collision()
+        self.forward(self.step_size)
 
-    def __move_right(self):
+
+    # Рух вправо
+    def move_right(self):
         self.setheading(0)
-        self.forward(10)
-        self.check_collision()
+        self.forward(self.step_size)
 
-    def __move_up(self):
+
+    # Рух вгору
+    def move_up(self):
         self.setheading(90)
-        self.forward(10)
-        self.check_collision()
-
-    def __move_down(self):
-        self.setheading(-90)
-        self.forward(10)
-        self.check_collision()
-
-    def check_collision(self):
-        """Перевірка зіткнення з роботами поточного рівня"""
-        end_level = False
-        for robot in self.game.level.robots:
-            if self.distance(robot.pos()) < 20 and robot.isvisible():
-                robot.clear()
-                robot.hideturtle()
-                if robot.is_right:
-                    end_level = True
-                    robot.pendown()
-                    robot.move()
-                    break
-                else:
-                    Player.errors += 1
-
-        if end_level:
-            for robot in self.game.level.robots:
-                if not robot.is_right:
-                    robot.clear()
-                    robot.hideturtle()
-            self.game.next_level()
-
-        # update()
+        self.forward(self.step_size)
 
 
-class Robot(Turtle):
-    """Клас робота який малює лінію, якщо відповідь правильна"""
+    # Рух вниз
+    def move_down(self):
+        self.setheading(270)
+        self.forward(self.step_size)
 
-    def __init__(self, x1, y1, x2, y2, color_val, text, is_right=False):
-        super().__init__("classic")
-        self.hideturtle()
-        self.is_right = is_right
-        self.speed(0)
-        self.color(color_val)
-        self.penup()
-        self.goto(x1, y1)
-        self.showturtle()
-        self.write(text, font=("Arial", 16, "normal"))
-        # для майбутнього переміщення
-        self.__command_x = x2
-        self.__command_y = y2
 
+    # Виведення повідомлення про завершення гри
+    def write_end(self, txt):
+        self.go_to(-150, 0)
+        self.write(txt, font=("Arial", 30))
+
+
+# --- Клас ворога, що рухається автоматично ---
+class Enemy(Sprite):
+    def __init__(self, x, y, col, sh, step_size):
+        super().__init__(x, y, col, sh)
+        self.step_size = step_size
+
+
+    # Рух ворога вздовж осі X з відбиванням
     def move(self):
-        if self.is_right:
-            self.goto(self.__command_x, self.__command_y)
+        self.forward(self.step_size)
+        if self.xcor() >= 200:
+            self.setheading(180)
+            self.forward(self.step_size)
+        if self.xcor() <= -200:
+            self.setheading(0)
+            self.forward(self.step_size)
 
 
-class Level:
-    """логіка рівня, вівень складається з роботів, перевіряється зіткнення робота з гравцем"""
-
-    def __init__(self):
-        self.colorsList = ("red", "blue", "orange", "green")
-        self.robots = []
-        # Прапорець закінчення рівня
-        self.end_level = False
-
-    def add_robot(self, x1, y1, x2, y2, text, is_right):
-        # Використовуємо колір із списку для кожного робота
-        color_val = self.colorsList[len(self.robots)]
-        r = Robot(x1, y1, x2, y2, color_val, text, is_right)
-        self.robots.append(r)
+# --- Створення об'єктів гри ---
+enemy1 = Enemy(200, 100, "red", "square", 30)
+enemy2 = Enemy(-200, -100, "red", "square", 30)
+player = Player(0, -180, "navy", "turtle", 10)
+finish = Sprite(0, 180, "gold", "triangle")
 
 
-class Game:
-    """Клас гри"""
-
-    def __init__(self):
-        self.currentLevel = 0
-        self.create_level1()
-        self.player = Player(0, 0, self)
-
-    def create_level1(self):
-        level = Level()
-        level.add_robot(-80, -120, -200, 0, "Сідней", True)
-        level.add_robot(-80, 120, 0, 0, "Берлін", False)
-        level.add_robot(80, 120, 0, 0, "Рим", False)
-        level.add_robot(80, -120, 0, 0, "Київ", False)
-        self.level = level
-
-    def create_level2(self):
-        level = Level()
-        level.add_robot(-80, 120, 0, 0, "Атлантичний", False)
-        level.add_robot(200, 0, 120, -120, "Китайський", True)
-        level.add_robot(80, 120, 0, 0, "Індійський", False)
-        level.add_robot(80, -120, 0, 0, "Тихий", False)
-        self.level = level
-
-    def create_level3(self):
-        level = Level()
-        level.add_robot(-200, 120, 0, 0, "Python", False)
-        level.add_robot(100, 120, 0, 0, "C++", False)
-        level.add_robot(0, 0, 0, 200, "Mouse", True)
-        level.add_robot(0, -120, 0, 0, "JavaAcript", False)
-        self.level = level
-
-    def create_level4(self):
-        level = Level()
-        level.add_robot(-80, 120, 0, 0, "Cat", False)
-        level.add_robot(80, 120, 0, 0, "Dog", False)
-        level.add_robot(0, -120, 0, 0, "Mouse", False)
-        level.add_robot(0, 200, 160, 40, "Shark", True)
-        self.level = level
-
-    def create_level5(self):
-        level = Level()
-        level.add_robot(120, -120, -80, -120, "Head", True)
-        level.add_robot(-120, -120, 0, 0, "CPU", False)
-        level.add_robot(0, 0, 0, 0, "SSD", False)
-        level.add_robot(150, 0, 0, 0, "RAM", False)
-        self.level = level
-
-    def create_level6(self):
-        level = Level()
-        level.add_robot(-80, 120, 0, 0, "Red", False)
-        level.add_robot(-120, 40, 0, 200, "Brawl", True)
-        level.add_robot(80, 120, 0, 0, "Green", False)
-        level.add_robot(100, 0, 0, 0, "Blue", False)
-        self.level = level
-
-    def create_level7(self):
-        level = Level()
-        level.add_robot(-80, 120, 0, 0, "Train", False)
-        level.add_robot(80, 120, 0, 0, "Car", False)
-        level.add_robot(-200, 0, 200, 0, "Seat", True)
-        level.add_robot(120, 0, 0, 0, "Rocket", False)
-        self.level = level
-
-    def create_level8(self):
-        level = Level()
-        level.add_robot(-80, 120, 0, 0, "One", False)
-        level.add_robot(80, 120, 0, 0, "Two", False)
-        level.add_robot(80, -120, 0, 0, "Three", False)
-        level.add_robot(160, 40, -120, 40, "Minus", True)
-        self.level = level
-
-    def next_level(self):
-        self.currentLevel += 1
-        info(f"Рівень {self.currentLevel} пройдено!", "green", "orange")
-        if self.currentLevel == 1:
-            self.create_level2()
-        elif self.currentLevel == 2:
-            self.create_level3()
-        elif self.currentLevel == 3:
-            self.create_level4()
-        elif self.currentLevel == 4:
-            self.create_level5()
-        elif self.currentLevel == 5:
-            self.create_level6()
-        elif self.currentLevel == 6:
-            self.create_level7()
-        elif self.currentLevel == 7:
-            self.create_level8()
-        if self.currentLevel >= 8:
-            info("Перемога!", "white", "green")
-            info(f"Помилок: {Player.errors} шт!", "white", "green")
+# --- Основна ігрова функція (цикл) ---
+def game():
+    # Рух ворогів
+    enemy1.move()
+    enemy2.move()
 
 
-game = Game()
-screen.listen()
+    # Перевірка програшу
+    if player.touch_t(enemy1) or player.touch_t(enemy2):
+        player.write_end("I am loose 😭😭😭")
+        return
+
+
+    # Перевірка виграшу
+    if player.touch_t(finish):
+        player.write_end("I am wiin 😁😁😁")
+        return
+
+
+    # Повторний запуск функції через 100 мс (таймер)
+    screen.ontimer(game, 100)
+
+
+# --- Запуск гри ---
+game()
+
 done()
