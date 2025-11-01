@@ -1,163 +1,137 @@
-from turtle import *
+# підключення pygame
+import pygame
+from random import randint
+
+# кольори
+YELLOW = (200, 200, 0)
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+BLUE = (0, 0, 255)
+GREEN = (0, 255, 0)
+RED = (255, 0, 0)
+
+FPS = 50
+SPEED = 5
+# налаштування Pygame
+pygame.init()
+screen = pygame.display.set_mode((500, 500))
+
+img_player = pygame.image.load("DinoRun1.png").convert_alpha()
+
+img_cactus = pygame.image.load("SmallCactus1.png")
+img_cloud = pygame.image.load("Cloud.png")
+img_ground = pygame.image.load("Track.png")
 
 
-# --- Налаштування екрану ---
-screen = Screen()
-screen.bgcolor("lightblue")
+class Object:
+    def __init__(self, x, y, img):
+        self.img = img
+        self.rect = pygame.Rect(  # один рядок
+            x, y, self.img.get_width(),  # один рядок
+            self.img.get_height())  # один рядок
+
+    def draw(self, screen):
+        screen.blit(self.img, (self.rect.left, self.rect.top))
+
+# клас гравця з керуванням
+class Player(Object):
+    def __init__(self, x, y):
+        super().__init__(x, y, img_player)
+        self.max_y = y
+        self.velocity = 0
+        self.GRAVITY = 0.7
+        self.in_air = False
+
+    # реалізація керування і гравітації
+    def update(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE] and not self.in_air:
+            self.velocity = 15
+            self.in_air = True
+
+        if self.in_air:
+            self.rect.top -= self.velocity
+            self.velocity -= self.GRAVITY
+            if self.rect.top >= self.max_y:
+                self.in_air = False
+                self.rect.top = self.max_y
 
 
-# --- Базовий клас для всіх спрайтів ---
-class Sprite(Turtle):
-    def __init__(self, x, y, col, sh):
-        super().__init__()
-        # t = Turtle()
-        self.color(col)
-        self.shapesize(5)
-        self.shape(sh)
-        self.go_to(x, y)
+class MovingObject(Object):
+    def update(self):
+        self.rect.left -= SPEED
+        if self.rect.right < 0:
+            self.rect.x = randint(600, 1000)
 
 
-    # Переміщення спрайта без малювання
-    def go_to(self, x, y):
-        self.penup()
-        self.goto(x, y)
+# кактус, що рухаються ліворуч
+class Cactus(MovingObject):
+    def __init__(self):
+        x = randint(600, 1000)
+        super().__init__(x, 400, img_cactus)
 
 
-    # Перевірка зіткнення з іншим об’єктом
-    def touch_t(self, t):
-        if abs(self.xcor() - t.xcor()) < 20 and abs(self.ycor() - t.ycor()) < 20:
-            return True
-        return False
+# хмара
+class Cloud(MovingObject):
+    def __init__(self):
+        x = randint(500, 1000)
+        y = randint(80, 200)
+        super().__init__(x, y, img_cloud)
+
+    def update(self):
+        if self.rect.right <= 0:
+            self.rect.y = randint(50, 300)
+        super().update()
 
 
-# --- Клас гравця (керується з клавіатури) ---
-class Player(Sprite):
-    def __init__(self, x, y, col, sh, step_size):
-        super().__init__(x, y, col, sh)
-        self.step_size = step_size
+# реалізація переміщення та видалення об'єктів, що не взаємодіють з гравцем
+class Enviroment(Object):
+    def __init__(self, x, y):
+        super().__init__(x, y, img_ground)
+        self.cloud = Cloud()
+        self.cactus = Cactus()
+
+    def update(self):
+        self.rect.left -= SPEED
+        if self.rect.right <= 500:
+            self.rect.left = 0
+
+        self.cloud.update()
+        self.cactus.update()
+
+    def draw(self, screen):
+        screen.blit(self.img, (self.rect.left, self.rect.top))
+        self.cloud.draw(screen)
+        self.cactus.draw(screen)
 
 
-        # Прив'язка клавіш до функцій руху
-        screen.onkey(self.move_left, "Left")
-        screen.onkey(self.move_right, "Right")
-        screen.onkey(self.move_down, "Down")
-        screen.onkey(self.move_up, "Up")
-        screen.listen()
+##################################
+# ігрові об'єкти та ігровий цикл
+player = Player(100, 380)
+enviroment = Enviroment(0, 460)
 
+# створення годинника
+clock = pygame.time.Clock()
+running = True
 
-    # Рух вліво
-    def move_left(self):
-        self.setheading(180)
-        self.forward(self.step_size)
+while running:
+    # обробка подій
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
 
+    # заливка екрана кольором, відображення прямокутників
+    screen.fill(WHITE)
+    player.update()
 
-    # Рух вправо
-    def move_right(self):
-        self.setheading(0)
-        self.forward(self.step_size)
+    enviroment.update()
+    enviroment.draw(screen)
 
+    player.draw(screen)
 
-    # Рух вгору
-    def move_up(self):
-        self.setheading(90)
-        self.forward(self.step_size)
+    # оновлення дисплея та обмеження частоти
+    pygame.display.flip()
+    clock.tick(FPS)
 
-
-    # Рух вниз
-    def move_down(self):
-        self.setheading(270)
-        self.forward(self.step_size)
-
-
-    # Виведення повідомлення про завершення гри
-    def write_end(self, txt):
-        self.go_to(-150, 0)
-        self.write(txt, font=("Arial", 30))
-
-
-# --- Клас ворога, що рухається автоматично ---
-class Enemy(Sprite):
-    def __init__(self, x, y, col, sh, step_size):
-        super().__init__(x, y, col, sh)
-        self.step_size = step_size
-
-
-    # Рух ворога вздовж осі X з відбиванням
-    def move(self):
-        self.forward(self.step_size)
-        if self.xcor() >= 200:
-            self.setheading(180)
-            self.forward(self.step_size)
-        if self.xcor() <= -200:
-            self.setheading(0)
-            self.forward(self.step_size)
-
-
-# --- Створення об'єктів гри ---
-enemy1 = Enemy(200, 100, "red", "square", 30)
-enemy2 = Enemy(-200, -100, "red", "square", 30)
-player = Player(0, -180, "navy", "turtle", 10)
-finish = Sprite(0, 180, "gold", "triangle")
-
-
-# --- Основна ігрова функція (цикл) ---
-def game():
-    # Рух ворогів
-    enemy1.move()
-    enemy2.move()
-
-
-    # Перевірка програшу
-    if player.touch_t(enemy1) or player.touch_t(enemy2):
-        player.write_end("I am loose 😭😭😭")
-        return
-
-
-    # Перевірка виграшу
-    if player.touch_t(finish):
-        player.write_end("I am wiin 😁😁😁")
-        return
-
-
-    # Повторний запуск функції через 100 мс (таймер)
-    screen.ontimer(game, 100)
-
-
-# --- Запуск гри ---
-game()
-
-done()
-
-
-
-
-
-# ДЛЯ ІЛОНИ
-
-pic_map = [ "01110001110",
-            "11111011111",
-            "11111111111",
-            "11112121111",
-            "01122222110",
-            "00121212100",
-            "00121212100",
-            "00222122200",
-            "00022222000",
-            "00013131000",
-            "00113131100",
-            "00434343400",
-            "00033333000",
-            "00011011000",
-            "00555055500"]
-
-
-def drawPix(x,y, pic_map, colors_map):
-    x_start = x
-    for line in pic_map:
-        for num in line:
-            start(x,y)
-            if num != "-":
-                square_fill(pixel_size,colors_map[int(num)])# ЗАМІСТЬ ЦЬОГОРОБИМО ЧЕРЕПАШКУ В ЦИХ КООРДИНАТАХ
-            x += pixel_size 
-        x = x_start
-        y -= pixel_size 
+pygame.quit()
