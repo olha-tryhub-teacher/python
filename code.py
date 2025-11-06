@@ -1,22 +1,19 @@
-# клас гравця з керуванням
-class Player(Object):
-    def __init__(self, x, y):
-        super().__init__(x, y, img_player)
-        self.max_y = y
-        self.velocity = 0
-        self.GRAVITY = 0.007
-        self.in_air = False
+# клас для об'єктів-спрайтів
+class Sprite:
+    def __init__(self, coord, color):
+        self.image = pygame.Surface((100, 100))
+        self.image.fill(color)
+        self.rect = pygame.Rect(coord, (100, 100))
+        self.dx = 5
 
-    # реалізація керування і гравітації
     def update(self):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE] and not self.in_air:
-            self.velocity = 15
-            self.in_air = True
+        self.rect.centerx += self.dx
+        if self.rect.right > 500:
+            self.dx = -5  # змінити напрямок руху вліво
+        elif self.rect.left < 0:
+            self.dx = 5   # змінити напрямок руху вправо
 
-        if self.in_air:
-            self.rect.top -= self.velocity
-            self.velocity -= self.GRAVITY
-            if self.rect.top >= self.max_y:
-                self.in_air = False
-                self.rect.top = self.max_y
+
+    def draw(self, surface):
+        # відображення зображення (image) на екрані
+        surface.blit(self.image, (self.rect.x, self.rect.y))
