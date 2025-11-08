@@ -1,19 +1,19 @@
-
-# кактус, що рухаються ліворуч
-class Cactus(MovingObject):
-    def __init__(self):
-        x = randint(600, 1000)
-        super().__init__(x, 400, img_cactus)
-
-
-# хмара
-class Cloud(MovingObject):
-    def __init__(self):
-        x = randint(500, 1000)
-        y = randint(80, 200)
-        super().__init__(x, y, img_cloud)
+# реалізація переміщення та видалення об'єктів, що не взаємодіють з гравцем
+class Enviroment(Object):
+    def __init__(self, x, y):
+        super().__init__(x, y, img_ground)
+        self.cloud = Cloud()
+        self.cactus = Cactus()
 
     def update(self):
-        if self.rect.right <= 0:
-            self.rect.y = randint(50, 300)
-        super().update()
+        self.rect.left -= SPEED
+        if self.rect.right <= 500:
+            self.rect.left = 0
+
+        self.cloud.update()
+        self.cactus.update()
+
+    def draw(self, screen):
+        screen.blit(self.img, (self.rect.left, self.rect.top))
+        self.cloud.draw(screen)
+        self.cactus.draw(screen)
