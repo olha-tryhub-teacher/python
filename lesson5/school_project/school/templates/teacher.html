@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ teacher.name }}{% endblock %}
+
+{% block content %}
+<h2>{{ teacher.first_name }} {{ teacher.last_name }}</h2>
+<p>Зарплата {{ teacher.salary }}</p>
+<a href="/school/teachers/">← Назад до списку</a>
+{% endblock %}
