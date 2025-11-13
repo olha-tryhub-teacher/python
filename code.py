@@ -1,6 +1,4 @@
-# підключення pygame
 import pygame
-from random import randint
 
 # кольори
 YELLOW = (200, 200, 0)
@@ -10,146 +8,125 @@ BLUE = (0, 0, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 
-FPS = 50
-SPEED = 5
 # налаштування Pygame
 pygame.init()
 screen = pygame.display.set_mode((500, 500))
-
-img_player = pygame.image.load("DinoRun1.png").convert_alpha()
-img_player2 = pygame.image.load("DinoRun2.png").convert_alpha()
-img_player_jump = pygame.image.load("DinoJump.png").convert_alpha()
-
-img_cactus = pygame.image.load("SmallCactus1.png")
-img_cloud = pygame.image.load("Cloud.png")
-img_ground = pygame.image.load("Track.png")
-
-
-class Object:
-    def __init__(self, x, y, img):
-        self.img = img
-        self.rect = pygame.Rect(  # один рядок
-            x, y, self.img.get_width(),  # один рядок
-            self.img.get_height())  # один рядок
-
-    def draw(self, screen):
-        screen.blit(self.img, (self.rect.left, self.rect.top))
-
-# клас гравця з керуванням
-class Player(Object):
-    def __init__(self, x, y):
-        super().__init__(x, y, img_player)
-        self.max_y = y
-        self.velocity = 0
-        self.GRAVITY = 0.7
-        self.in_air = False
-
-        self.imgs = [img_player, img_player2]
-        self.img_number = 0
-        self.anim_speed = 0.1
-
-    # реалізація керування і гравітації
-    def update(self):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE] and not self.in_air:
-            self.velocity = 15
-            self.in_air = True
-            self.img = img_player_jump # ⬅️⬅️⬅️
-
-        if self.in_air:
-            self.rect.top -= self.velocity
-            self.velocity -= self.GRAVITY
-            if self.rect.top >= self.max_y:
-                self.in_air = False
-                self.rect.top = self.max_y
-        else:
-            self.animate()
-
-    def animate(self):
-        self.img_number += self.anim_speed
-        if self.img_number >= len(self.imgs):
-            self.img_number = 0
-        self.img = self.imgs[int(self.img_number)]
-
-
-class MovingObject(Object):
-    def update(self):
-        self.rect.left -= SPEED
-        if self.rect.right < 0:
-            self.rect.x = randint(600, 1000)
-
-
-# кактус, що рухаються ліворуч
-class Cactus(MovingObject):
-    def __init__(self):
-        x = randint(600, 1000)
-        super().__init__(x, 400, img_cactus)
-
-
-# хмара
-class Cloud(MovingObject):
-    def __init__(self):
-        x = randint(500, 1000)
-        y = randint(80, 200)
-        super().__init__(x, y, img_cloud)
-
-    def update(self):
-        if self.rect.right <= 0:
-            self.rect.y = randint(50, 300)
-        super().update()
-
-
-# реалізація переміщення та видалення об'єктів, що не взаємодіють з гравцем
-class Enviroment(Object):
-    def __init__(self, x, y):
-        super().__init__(x, y, img_ground)
-        self.cloud = Cloud()
-        self.cactus = Cactus()
-
-    def update(self):
-        self.rect.left -= SPEED
-        if self.rect.right <= 500:
-            self.rect.left = 0
-
-        self.cloud.update()
-        self.cactus.update()
-
-    def draw(self, screen):
-        screen.blit(self.img, (self.rect.left, self.rect.top))
-        self.cloud.draw(screen)
-        self.cactus.draw(screen)
-
-
-##################################
-# ігрові об'єкти та ігровий цикл
-player = Player(100, 380)
-enviroment = Enviroment(0, 460)
-
-# створення годинника
 clock = pygame.time.Clock()
+
+
+class Button():
+    def __init__(self, x, y, text, w):
+        self.rect = pygame.Rect(x, y, w, 50)
+        self.rect_image = pygame.Surface((w, 50))
+        self.rect_image.fill(BLUE)
+        self.rect_image_active = pygame.Surface((w, 50))
+        self.rect_image_active.fill(GREEN)
+
+        self.font = pygame.font.Font(None, 32)
+        self.text_image = self.font.render(text, True, WHITE)
+        self.text_rect = pygame.Rect(x, y, len(text) * 20, 32)
+        self.text_rect.centerx = self.rect.centerx
+        self.text_rect.top = y + 5
+        self.active = False
+        self.fn = None
+        self.activated = False
+
+    def update(self):
+        x, y = pygame.mouse.get_pos()
+        collision = self.rect.collidepoint(x, y)
+        click = pygame.mouse.get_pressed()[0]
+
+        if not click and self.activated:
+            self.activated = False
+
+        if collision:
+            self.active = True
+            if click and self.fn and not self.activated:
+                self.activated = True
+                self.fn()
+        else:
+            self.active = False
+
+    def draw(self, surface):
+        if self.active:
+            surface.blit(self.rect_image, (self.rect.x, self.rect.y))
+        else:
+            surface.blit(self.rect_image_active, (self.rect.x, self.rect.y))
+        surface.blit(self.text_image, (self.text_rect.x, self.text_rect.y))
+
+    def onclick(self, fn):
+        self.fn = fn
+
+
+# --- створення кнопок ДО циклу ---
+def go_to_game():
+    global game_part
+    game_part = "game"
+
+
+def go_to_gameover():
+    global game_part
+    game_part = "gameover"
+
+
+def go_to_victory():
+    global game_part
+    game_part = "victory"
+
+
+def go_to_menu():
+    global game_part
+    game_part = "menu"
+
+
+# Кнопки меню
+start_button = Button(100, 200, "Почати гру", 300)
+start_button.onclick(go_to_game)
+
+# Кнопки гри
+gameover_button = Button(100, 100, "Програш", 300)
+victory_button = Button(100, 300, "Виграш", 300)
+gameover_button.onclick(go_to_gameover)
+victory_button.onclick(go_to_victory)
+
+# Кнопки для екранів результату
+back_menu_button = Button(100, 200, "Назад у меню", 300)
+back_menu_button.onclick(go_to_menu)
+
+# --- головний цикл ---
+game_part = "menu"
 running = True
 
 while running:
-    # обробка подій
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            exit()
+            running = False
 
-    if player.rect.colliderect(enviroment.cactus.rect):
-        running = False
-
-    # заливка екрана кольором, відображення прямокутників
+    # Очищення екрану
     screen.fill(WHITE)
-    player.update()
 
-    enviroment.update()
-    enviroment.draw(screen)
+    # Вибір кнопок за поточним станом
+    if game_part == "menu":
+        # Оновлення і малювання кнопок
+        start_button.update()
+        start_button.draw(screen)
+    elif game_part == "game":
+        # Оновлення і малювання кнопок
+        gameover_button.update()
+        gameover_button.draw(screen)
+        victory_button.update()
+        victory_button.draw(screen)
+    elif game_part == "victory":
+        # Оновлення і малювання кнопок
+        start_button.update()
+        start_button.draw(screen)
+    elif game_part == "gameover":
+        # Оновлення і малювання кнопок
+        back_menu_button.update()
+        back_menu_button.draw(screen)
 
-    player.draw(screen)
-
-    # оновлення дисплея та обмеження частоти
+    # Оновлення екрану
     pygame.display.flip()
-    clock.tick(FPS)
+    clock.tick(50)
 
 pygame.quit()
