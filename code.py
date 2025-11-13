@@ -58,37 +58,10 @@ class Button():
         self.fn = fn
 
 
-class GameSprite:
-    def __init__(self, x, y, w, h, color, speed=0):
-        self.image = pygame.Surface((w, h))
-        self.image.fill(color)
-        self.rect = pygame.Rect(x, y, w, h)
-        self.speed = speed
-
-    def draw(self, surface):
-        # Відображення гравця на заданій поверхні (екрані)
-        surface.blit(self.image, (self.rect.x, self.rect.y))
-
-    def move_player(self, keys):
-        """Рух гравця за стрілками"""
-        if keys[pygame.K_LEFT]:
-            self.rect.x -= self.speed
-        if keys[pygame.K_RIGHT]:
-            self.rect.x += self.speed
-        if keys[pygame.K_UP]:
-            self.rect.y -= self.speed
-        if keys[pygame.K_DOWN]:
-            self.rect.y += self.speed
-
-    def collides(self, other):
-        return self.rect.colliderect(other.rect)
-
-
-# --- створення кнопок  ---
+# --- створення кнопок ДО циклу ---
 def go_to_game():
     global game_part
     game_part = "game"
-    player.rect.x, player.rect.y = 215, 430
 
 
 def go_to_gameover():
@@ -106,27 +79,19 @@ def go_to_menu():
     game_part = "menu"
 
 
-# ------------------ Міні-гра ------------------
-def update_game(keys):
-    player.move_player(keys)
-    if player.collides(goal):
-        go_to_victory()
-    elif player.collides(enemy):
-        go_to_gameover()
-
-
-
 # Кнопки меню
 start_button = Button(100, 200, "Почати гру", 300)
 start_button.onclick(go_to_game)
 
+# Кнопки гри
+gameover_button = Button(100, 100, "Програш", 300)
+victory_button = Button(100, 300, "Виграш", 300)
+gameover_button.onclick(go_to_gameover)
+victory_button.onclick(go_to_victory)
+
 # Кнопки для екранів результату
 back_menu_button = Button(100, 200, "Назад у меню", 300)
 back_menu_button.onclick(go_to_menu)
-
-player = GameSprite(215, 430, 70, 70, BLUE, 5)
-goal = GameSprite(430, 0, 70, 70, GREEN)
-enemy = GameSprite(0, 0, 70, 70, RED)
 
 # --- головний цикл ---
 game_part = "menu"
@@ -147,19 +112,15 @@ while running:
         start_button.draw(screen)
     elif game_part == "game":
         # Оновлення і малювання кнопок
-        keys = pygame.key.get_pressed()
-        update_game(keys)
-        goal.draw(screen)
-        enemy.draw(screen)
-        player.draw(screen)
-
+        gameover_button.update()
+        gameover_button.draw(screen)
+        victory_button.update()
+        victory_button.draw(screen)
     elif game_part == "victory":
-        screen.fill(GREEN)
         # Оновлення і малювання кнопок
         back_menu_button.update()
         back_menu_button.draw(screen)
     elif game_part == "gameover":
-        screen.fill(RED)
         # Оновлення і малювання кнопок
         back_menu_button.update()
         back_menu_button.draw(screen)
