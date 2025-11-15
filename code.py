@@ -1,14 +1,24 @@
-# створення об'єктів гри
-ball = Ball(100, HEIGHT//2, image_ball, 4)
-player = Player(WIDTH//2 - 50, HEIGHT - 60, image_platform1)
+    ball.update()
+    player.update()
 
-score = 0
-label = TextLabel(370, 470, 28)
-label.set_text(f"Score: {score}")
+    # перевірка програшу
+    if ball.rect.top > HEIGHT:
+        print("Game Over!")
+        running = False
 
-blocks = []
-for i in range(15):
-    row = i // 5
-    col = i % 5
-    blocks.append(Sprite(50 + col*80, 20 + row*40,
-                  [image_block1, image_block2, image_block3][row]))
+    if player.collide(ball):
+        ball.change_velocity(player)
+
+    screen.blit(image_bg, (0, 0))
+
+    for b in blocks[:]:
+        if b.collide(ball):
+            blocks.remove(b)
+            ball.velocityy = ball.SPEED
+            score += 100
+            label.set_text(f"Score: {score}")
+        b.draw(screen)
+
+    ball.draw(screen)
+    label.draw(screen)
+    player.draw(screen)
