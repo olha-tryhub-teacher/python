@@ -1,31 +1,14 @@
-class Player(Sprite):
-    def __init__(self, x, y, image_base):
-        super().__init__(x, y, image_base)
+# створення об'єктів гри
+ball = Ball(100, HEIGHT//2, image_ball, 4)
+player = Player(WIDTH//2 - 50, HEIGHT - 60, image_platform1)
 
-    def update(self):
-        keys = pg.key.get_pressed()
-        if keys[pg.K_LEFT]:
-            self.rect.left -= 8
-        if keys[pg.K_RIGHT]:
-            self.rect.left += 8
+score = 0
+label = TextLabel(370, 470, 28)
+label.set_text(f"Score: {score}")
 
-
-class Ball(Sprite):
-    def __init__(self, x, y, image, velocity):
-        super().__init__(x, y, image)
-        self.SPEED = velocity
-        self.velocityx = velocity
-        self.velocityy = -velocity
-
-    def update(self):
-        self.rect.left += self.velocityx
-        self.rect.top += self.velocityy
-
-        if self.rect.left < 0 or self.rect.right > WIDTH:
-            self.velocityx = -self.velocityx
-        if self.rect.top < 0:
-            self.velocityy = self.SPEED
-
-    def change_velocity(self, player):
-        self.velocityy = -self.SPEED
-        # горизонтальна швидкість не змінюється
+blocks = []
+for i in range(15):
+    row = i // 5
+    col = i % 5
+    blocks.append(Sprite(50 + col*80, 20 + row*40,
+                  [image_block1, image_block2, image_block3][row]))
