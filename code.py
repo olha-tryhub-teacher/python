@@ -1,24 +1,19 @@
-from django import forms
-from django.contrib.auth.models import User
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Логін</title>
+</head>
+<body>
+    <h2>Авторизація</h2>
 
-class RegisterForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-    password2 = forms.CharField(label="Repeat password", widget=forms.PasswordInput)
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
 
-    class Meta:
-        model = User
-        fields = ["username"]
-
-    def clean(self):
-        cleaned_data = super().clean()
-        p1 = cleaned_data.get("password")
-        p2 = cleaned_data.get("password2")
-
-        if p1 and p2 and p1 != p2:
-            raise forms.ValidationError("Passwords do not match!")
-
-        return cleaned_data
-
-class LoginForm(forms.Form):
-    username = forms.CharField(max_length=150)
-    password = forms.CharField(widget=forms.PasswordInput)
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Увійти</button>
+    </form>
+</body>
+</html>
