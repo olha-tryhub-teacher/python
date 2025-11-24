@@ -1,19 +1,20 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Логін</title>
-</head>
-<body>
-    <h2>Авторизація</h2>
+def login_view(request):
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
 
-    {% if error %}
-        <p style="color:red;">{{ error }}</p>
-    {% endif %}
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('school:school-home')  # змінити на вашу сторінку
+            else:
+                return render(request, 'login.html', {
+                    'form': form,
+                    'error': 'Невірний логін або пароль'
+                })
+    else:
+        form = LoginForm()
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Увійти</button>
-    </form>
-</body>
-</html>
+    return render(request, 'login.html', {'form': form})
