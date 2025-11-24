@@ -1,2 +1,1 @@
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'css/site.css' %}" rel="stylesheet">
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
