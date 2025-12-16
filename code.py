@@ -1,5 +1,8 @@
-label_win = TextLabel(100, 250, 50, GREEN)  # ⬅️
-label_win.set_text(f"WIN!!!")  # ⬅️
+    # перевірка програшу
+    if ball.rect.top > HEIGHT:
+        label_lose.draw(screen)  # ⬅️
+        running = False
 
-label_lose = TextLabel(100, 250, 50, RED)  # ⬅️
-label_lose.set_text(f"LOSE!!!")  # ⬅️
+    if len(blocks) == 0:  # ⬅️
+        label_win.draw(screen)  # ⬅️
+        running = False  # ⬅️
