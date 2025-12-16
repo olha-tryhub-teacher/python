@@ -1,12 +1,12 @@
 
+class Player(Sprite):
+    def __init__(self, x, y, image_base):
+        super().__init__(x, y, image_base)
 
-class Sprite:
-    def __init__(self, x, y, image):
-        self.image = image
-        self.rect = pg.Rect(x, y, self.image.get_width(), self.image.get_height())
+    def update(self):
+        keys = pg.key.get_pressed()
+        if keys[pg.K_LEFT]:
+            self.rect.left -= 8
+        if keys[pg.K_RIGHT]:
+            self.rect.left += 8
 
-    def collide(self, sprite):
-        return self.rect.colliderect(sprite.rect)
-
-    def draw(self, screen):
-        screen.blit(self.image, (self.rect.left, self.rect.top))
