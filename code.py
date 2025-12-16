@@ -99,13 +99,7 @@ while running:
         if event.type == pg.QUIT:
             running = False
 
-    for b in blocks[:]:
-        if b.collide(ball):
-            blocks.remove(b)
-            ball.velocityy = ball.SPEED
-            score += 100
-            label.set_text(f"Score: {score}")
-        b.draw(screen)
+
 
     # перевірка програшу
     if ball.rect.top > HEIGHT:
@@ -116,6 +110,13 @@ while running:
         ball.change_velocity(player)
 
     screen.blit(image_bg, (0, 0))
+    for b in blocks[:]:
+        if b.collide(ball):
+            blocks.remove(b)
+            ball.velocityy = ball.SPEED
+            score += 100
+            label.set_text(f"Score: {score}")
+        b.draw(screen)
     ball.update()
     player.update()
 
@@ -127,4 +128,3 @@ while running:
     clock.tick(50)
 
 pg.quit()
-
