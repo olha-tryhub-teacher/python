@@ -1,14 +1,12 @@
-class TextLabel:
-    def __init__(self, x, y, size=32, color=BLACK):
-        self.x = x
-        self.y = y
-        self.color = color
-        self.image = None
-        self.font = pg.font.Font(None, size)
 
-    def set_text(self, text):
-        self.image = self.font.render(text, True, self.color)
+
+class Sprite:
+    def __init__(self, x, y, image):
+        self.image = image
+        self.rect = pg.Rect(x, y, self.image.get_width(), self.image.get_height())
+
+    def collide(self, sprite):
+        return self.rect.colliderect(sprite.rect)
 
     def draw(self, screen):
-        screen.blit(self.image, (self.x, self.y))
-
+        screen.blit(self.image, (self.rect.left, self.rect.top))
