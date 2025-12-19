@@ -1,0 +1,60 @@
+[
+  {
+    "model": "school.teacher",
+    "pk": 1,
+    "fields": { "first_name": "Іван", "last_name": "Петренко", "salary": "15000.00" }
+  },
+  {
+    "model": "school.teacher",
+    "pk": 2,
+    "fields": { "first_name": "Ольга", "last_name": "Шевченко", "salary": "18000.00" }
+  },
+  {
+    "model": "school.teacher",
+    "pk": 3,
+    "fields": { "first_name": "Марія", "last_name": "Коваль", "salary": "17000.00" }
+  },
+  {
+    "model": "school.teacher",
+    "pk": 4,
+    "fields": { "first_name": "Андрій", "last_name": "Сидоренко", "salary": "16000.00" }
+  },
+  {
+    "model": "school.teacher",
+    "pk": 5,
+    "fields": { "first_name": "Світлана", "last_name": "Бондар", "salary": "15500.00" }
+  },
+
+  {
+    "model": "school.classroom",
+    "pk": 1,
+    "fields": { "start_year": 2021, "letter": "А", "class_teacher": 1 }
+  },
+  {
+    "model": "school.classroom",
+    "pk": 2,
+    "fields": { "start_year": 2021, "letter": "Б", "class_teacher": 2 }
+  },
+
+  { "model": "school.student", "pk": 1, "fields": { "first_name": "Олег", "last_name": "Мельник", "birth_date": "2010-05-14", "classroom": 1 }},
+  { "model": "school.student", "pk": 2, "fields": { "first_name": "Марія", "last_name": "Іваненко", "birth_date": "2010-03-12", "classroom": 1 }},
+  { "model": "school.student", "pk": 3, "fields": { "first_name": "Артем", "last_name": "Шевченко", "birth_date": "2010-08-21", "classroom": 1 }},
+  { "model": "school.student", "pk": 4, "fields": { "first_name": "Христина", "last_name": "Кравчук", "birth_date": "2010-01-09", "classroom": 1 }},
+  { "model": "school.student", "pk": 5, "fields": { "first_name": "Денис", "last_name": "Гуменюк", "birth_date": "2010-11-30", "classroom": 1 }},
+  { "model": "school.student", "pk": 6, "fields": { "first_name": "Катерина", "last_name": "Петрик", "birth_date": "2010-04-25", "classroom": 1 }},
+  { "model": "school.student", "pk": 7, "fields": { "first_name": "Максим", "last_name": "Лисенко", "birth_date": "2010-06-17", "classroom": 1 }},
+  { "model": "school.student", "pk": 8, "fields": { "first_name": "Софія", "last_name": "Мартинюк", "birth_date": "2010-10-03", "classroom": 1 }},
+  { "model": "school.student", "pk": 9, "fields": { "first_name": "Руслан", "last_name": "Захарчук", "birth_date": "2010-02-14", "classroom": 1 }},
+  { "model": "school.student", "pk": 10, "fields": { "first_name": "Ірина", "last_name": "Ткачук", "birth_date": "2010-09-28", "classroom": 1 }},
+
+  { "model": "school.student", "pk": 11, "fields": { "first_name": "Валерія", "last_name": "Соколова", "birth_date": "2010-07-19", "classroom": 2 }},
+  { "model": "school.student", "pk": 12, "fields": { "first_name": "Тарас", "last_name": "Гринюк", "birth_date": "2010-05-11", "classroom": 2 }},
+  { "model": "school.student", "pk": 13, "fields": { "first_name": "Анна", "last_name": "Мельничук", "birth_date": "2010-12-03", "classroom": 2 }},
+  { "model": "school.student", "pk": 14, "fields": { "first_name": "Олексій", "last_name": "Рудько", "birth_date": "2010-01-21", "classroom": 2 }},
+  { "model": "school.student", "pk": 15, "fields": { "first_name": "Юлія", "last_name": "Ткач", "birth_date": "2010-06-09", "classroom": 2 }},
+  { "model": "school.student", "pk": 16, "fields": { "first_name": "Дмитро", "last_name": "Білик", "birth_date": "2010-03-30", "classroom": 2 }},
+  { "model": "school.student", "pk": 17, "fields": { "first_name": "Лілія", "last_name": "Приймак", "birth_date": "2010-04-14", "classroom": 2 }},
+  { "model": "school.student", "pk": 18, "fields": { "first_name": "Роман", "last_name": "Онищук", "birth_date": "2010-10-17", "classroom": 2 }},
+  { "model": "school.student", "pk": 19, "fields": { "first_name": "Марко", "last_name": "Семенюк", "birth_date": "2010-08-23", "classroom": 2 }},
+  { "model": "school.student", "pk": 20, "fields": { "first_name": "Олександра", "last_name": "Гладка", "birth_date": "2010-11-01", "classroom": 2 }}
+]
