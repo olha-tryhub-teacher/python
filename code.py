@@ -37,8 +37,8 @@ window = display.set_mode(size)
 display.set_caption("ВАША НАЗВА")
 clock = time.Clock()
 
-bg = image.load("img.png")
-bg = transform.scale(bg, size)
+# bg = image.load("img.png")
+# bg = transform.scale(bg, size)
 
 ball = Ball(300, 300, 25, (255, 100, 255), 5)
 
@@ -46,8 +46,8 @@ while True:
     for e in event.get():
         if e.type == QUIT:
             quit()
-
-    window.blit(bg, (0, 0))
+    screen.fill((255, 255, 255))
+    # window.blit(bg, (0, 0))
     ball.move()
     ball.reset()
 
