@@ -1,6 +1,16 @@
 from math import hypot
 from pygame import *
 from random import randint  # ⬅️
+import socket
+import struct
+import threading
+
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect(("127.0.0.1", 5555))
+
+other_players_balls = {}
+my_id = None
+
 
 # Клас кульки
 class Ball:
@@ -22,29 +32,83 @@ class Ball:
         if keys[K_d]:
             self.x += self.speed
 
-    # ⬇️⬇️⬇️ 🔃🔃🔃
     def draw(self, center_x, center_y, scale):
         sx = int((self.x - center_x) * scale + WINDOW_SIZE[0] // 2)
         sy = int((self.y - center_y) * scale + WINDOW_SIZE[1] // 2)
-        draw.circle(window, self.color, (sx, sy), int(self.radius * scale))
+        size = int(self.radius * scale)  # ⬅️
+        draw.circle(window, self.color, (sx, sy), size)
+
 
     def collidecircle(self, other):
         distance = hypot(self.x - other.x, self.y - other.y)
         return distance <= self.radius + other.radius
 
-    # ⬇️⬇️⬇️
     def draw_center(self, scale):
+        size = int(self.radius * scale)
         draw.circle(
             window,
             self.color,
             (WINDOW_SIZE[0] // 2, WINDOW_SIZE[1] // 2),
-            int(self.radius * scale)
+            size
         )
 
 
+def recv_full(sock, size):
+    data = b''
+    while len(data) < size:
+        packet = sock.recv(size - len(data))
+        if not packet:
+            return None
+        data += packet
+    return data
+
+
+def receive_data():
+    global my_id, other_players_balls
+
+    while True:
+        try:
+            header = recv_full(client, 1)
+            if not header:
+                break
+
+            packet_type = struct.unpack("!B", header)[0]
+
+            # Тип 1 = мій ID
+            if packet_type == 1:
+                my_id = struct.unpack("!I", recv_full(client, 4))[0]
+                print("My ID:", my_id)
+
+            # Тип 3 = стан гри
+            elif packet_type == 3:
+                count = struct.unpack("!I", recv_full(client, 4))[0]
+
+                current_ids = set()
+
+                for _ in range(count):
+                    pid, x, y, r = struct.unpack("!Ifff", recv_full(client, 16))
+                    current_ids.add(pid)
+
+                    if pid == my_id:
+                        continue
+
+                    if pid not in other_players_balls:
+                        other_players_balls[pid] = Ball(x, y, r, (255, 0, 0))
+                    else:
+                        b = other_players_balls[pid]
+                        b.x, b.y, b.radius = x, y, r
+
+                for pid in list(other_players_balls.keys()):
+                    if pid not in current_ids:
+                        del other_players_balls[pid]
+
+        except Exception as e:
+            print("Receive error:", e)
+            break
+
 # Налаштування
-WINDOW_SIZE = 700, 500 # ⬅️🔃
-PLAYER_SPEED = 10 # ⬅️
+WINDOW_SIZE = 700, 500
+PLAYER_SPEED = 10
 
 # Pygame
 init()
@@ -52,9 +116,8 @@ window = display.set_mode(WINDOW_SIZE)
 clock = time.Clock()
 
 # Гравець (був ball)
-player = Ball(0, 0, 20, (0, 255, 0), PLAYER_SPEED)# ⬅️🔃
+player = Ball(0, 0, 20, (0, 255, 0), PLAYER_SPEED)  # ⬅️
 
-# ⬇️⬇️⬇️
 # Інші кульки
 balls = [
     Ball(
@@ -66,14 +129,17 @@ balls = [
     for _ in range(300)
 ]
 
+threading.Thread(target=receive_data, daemon=True).start()
+
 # Основний цикл
 running = True
 while running:
+
     for e in event.get():
         if e.type == QUIT:
             running = False
 
-    window.fill((0, 0, 0))
+    window.fill((255, 255, 255))
 
     # Масштаб (чим більший гравець — тим менший зум)
     scale = max(0.3, min(50 / player.radius, 1.5))
@@ -96,7 +162,14 @@ while running:
     for ball in to_remove:
         balls.remove(ball)
 
+    packet = struct.pack("!Bfff", 2, player.x, player.y, player.radius)
+    client.sendall(packet)
+    for ball in list(other_players_balls.values()):
+        ball.draw(player.x, player.y, scale)
+
+
     display.update()
     clock.tick(60)
 
 quit()
+
