@@ -1,12 +1,25 @@
-from socket import *
+client_socket = connect()
 
-client_socket = socket(AF_INET, SOCK_STREAM)
-client_socket.connect(('localhost', 12345))
 
-name = input("Для підключення на сервер введіть своє ім'я: ")
-client_socket.send(name.encode())
+def send_message():
+    while True:
+        msg = input()
+        if msg.lower() == "exit" or msg.lower() == "вихід":
+            client_socket.close()
+            break
+        client_socket.send(msg.encode())
 
-print(client_socket.recv(1024).decode()) # отримали вітання
 
-client_socket.close()
+threading.Thread(target=send_message, daemon=True).start()
 
+
+while True:
+    try:
+        message = client_socket.recv(1024).decode().strip()
+        if message:
+            print(message)
+        else:
+            break
+    except:
+        print("Від'єднано від сервера")
+        break
