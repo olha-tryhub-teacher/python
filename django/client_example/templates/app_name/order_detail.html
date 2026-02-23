@@ -1,0 +1,8 @@
+<h1>Замовлення №{{ order.id }}</h1>
+
+{% for item in order.items.all %}
+    <p>
+        {{ item.product.name }} x {{ item.quantity }} = {{ item.total_price }}
+    </p>
+{% endfor %}
+<h2>Всього: {{ order.total_price }}</h2>

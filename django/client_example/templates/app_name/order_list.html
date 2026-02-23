@@ -1,0 +1,9 @@
+<h1>Мої замовлення</h1>
+
+{% for order in orders %}
+<p>
+    <a href="{% url 'order_detail' order.id %}">
+        Замовлення №{{ order.id }}
+    </a>- {{ order.total_price }} грн
+</p>
+{% endfor %}
