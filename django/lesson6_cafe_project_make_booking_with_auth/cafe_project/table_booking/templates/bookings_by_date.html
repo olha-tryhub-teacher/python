@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Бронювання{% endblock %}
+{% block content %}
+<h2>Бронювання</h2>
+<a href="/table-booking/create-booking/">➕ Створити бронювання</a>
+<br>
+<br>
+
+<form method="get">
+  <input type="date" name="date" value="{{ date }}">
+  <button type="submit">Показати</button>
+</form>
+
+{% if bookings %}
+  <ul>
+    {% for b in bookings %}
+      <li>
+        {{ b.client.name }} —
+        столик {{ b.table.number }}
+        ({{ b.start_time }} – {{ b.end_time }})
+      </li>
+    {% endfor %}
+  </ul>
+{% elif date %}
+  <p>Немає бронювань на цю дату</p>
+{% endif %}
+{% endblock %}

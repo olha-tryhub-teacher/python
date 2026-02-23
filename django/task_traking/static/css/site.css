@@ -1,0 +1,13 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    background: url("https://www.pixelstalk.net/wp-content/uploads/image12/A-calming-green-leaf-wallpaper-HD-with-a-soft-focus-background-of-overlapping-leaves.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+

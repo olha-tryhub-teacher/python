@@ -1,0 +1,13 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    background: url("https://static.vecteezy.com/system/resources/previews/002/008/490/non_2x/abstract-blur-coffee-shop-background-free-photo.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+

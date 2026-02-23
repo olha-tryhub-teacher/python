@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Клієнт: {{ client.name }}{% endblock %}
+{% block content %}
+<!--<div>-->
+<!--<h2>Клієнт: {{ client.name }}</h2>-->
+<!--<p><strong>Телефон:</strong> {{ client.phone }}</p>-->
+<!--{% if client.email %}-->
+<!--  <p><strong>Email:</strong> {{ client.email }}</p>-->
+<!--{% endif %}-->
+<!--<p><strong>Зареєстрований:</strong> {{ client.created_at }}</p>-->
+<!--<hr>-->
+<!--<h3>Бронювання клієнта</h3>-->
+<!--<ul>-->
+<!--  {% for b in bookings %}-->
+<!--    <li>-->
+<!--      {{ b.date }} —-->
+<!--      столик {{ b.table.number }}-->
+<!--      ({{ b.start_time }} – {{ b.end_time }})-->
+<!--    </li>-->
+<!--  {% empty %}-->
+<!--    <li>Бронювань немає</li>-->
+<!--  {% endfor %}-->
+<!--</ul>-->
+<!--  </div>-->
+<div class="card mx-auto p-2" style="width: 18rem;">
+  <img src="https://geth.fr/wp-content/uploads/2024/04/CV-Avatar-h1-support.jpg" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Клієнт: {{ client.name }}</h5>
+    <p class="card-text"><strong>Телефон:</strong> {{ client.phone }}</p>
+    <p class="card-text"><strong>Email:</strong> {{ client.email }}</p>
+    <p class="card-text"><strong>Зареєстрований:</strong> {{ client.created_at }}</p>
+  </div>
+  <h6 class="card-title">Бронювання клієнта</h6>
+  <ul class="list-group list-group-flush">
+    {% for b in bookings %}
+    <li class="list-group-item">Дата: {{ b.date }}, столик №{{ b.table.number }}, ({{ b.start_time }} – {{ b.end_time }})</li>
+    {% empty %}
+    <li class="list-group-item">Бронювань немає</li>
+    {% endfor %}
+  </ul>
+  <div class="card-body">
+    <a href="/table-booking/clients/" class="card-link">← Назад до списку клієнтів</a>
+  </div>
+</div>
+<!--<a href="/table-booking/clients/" >← Назад до списку клієнтів</a>-->
+{% endblock %}

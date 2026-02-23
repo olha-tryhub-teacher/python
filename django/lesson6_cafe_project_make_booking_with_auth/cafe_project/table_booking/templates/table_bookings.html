@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Бронювання столика {{ table.number }}{% endblock %}
+
+{% block content %}
+<h2>Бронювання столика {{ table.number }}</h2>
+<ul>
+  {% for b in bookings %}
+    <li>
+      {{ b.date }}:
+      {{ b.start_time }} – {{ b.end_time }}
+      ({{ b.client.name }})
+    </li>
+  {% empty %}
+    <li>Бронювань немає</li>
+  {% endfor %}
+</ul>
+{% endblock %}

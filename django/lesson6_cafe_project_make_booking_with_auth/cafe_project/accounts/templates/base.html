@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Мій Django сайт{% endblock %}</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/site.css' %}" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary border border-warning-subtle shadow p-3 mb-5 bg-body-tertiary rounded">
+          <div class="container-fluid">
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="navbar-brand" href="/table-booking/home/">
+                      <img src="https://static.vecteezy.com/system/resources/previews/023/870/096/non_2x/cute-coffee-cup-kawaii-icon-logo-illustration-free-png.png" alt="Cafe" width="30" height="44">
+                    </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/table-booking/tables/">Столики</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/table-booking/clients/">Клієнти</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/table-booking/bookings/">Бронювання</a>
+                </li>
+                  {% if user.is_authenticated %}
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'accounts:logout' %}">Вихід</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                      <a class="nav-link" href="/accounts/login/">Вхід</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="/accounts/register/">Зареєструватися</a>
+                    </li>
+                {% endif %}
+              </ul>
+            </div>
+          </div>
+        </nav>
+    </header>
+    <hr>
+    <main >
+        {% block content %}{% endblock %}
+    </main>
+    <hr>
+</body>
+</html>

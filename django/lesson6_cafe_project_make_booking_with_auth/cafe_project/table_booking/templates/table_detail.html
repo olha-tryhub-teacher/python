@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Столик {{ table.number }}{% endblock %}
+
+{% block content %}
+<h2>Столик {{ table.number }}</h2>
+
+<p>Кількість місць: {{ table.seats }}</p>
+<p>Активний: {{ table.is_active }}</p>
+
+<a href="/table-booking/tables/{{ table.id }}/bookings/">Переглянути бронювання</a>
+{% endblock %}
