@@ -1,3 +1,22 @@
+from socket import *
+import threading
+import time
+
+
+def connect():
+    while True:
+        try:
+            sock = socket(AF_INET, SOCK_STREAM)
+            sock.connect(("localhost", 8080))
+            name = input("Введіть ім'я: ")
+            sock.send(name.encode())
+            return sock
+
+        except:
+            print("Не вдалося з'єднатися, пробуємо ще раз...")
+            time.sleep(1)
+
+
 client_socket = connect()
 
 
