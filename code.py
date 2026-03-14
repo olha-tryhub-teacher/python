@@ -1,44 +1,17 @@
-from socket import *
-import threading
-import time
+from customtkinter import *
 
+window = CTk()
+window.geometry("400x400")
+window.title("ДОДАЙТЕ ВАШУ НАЗВУ")
 
-def connect():
-    while True:
-        try:
-            sock = socket(AF_INET, SOCK_STREAM)
-            sock.connect(("localhost", 8080))
-            name = input("Введіть ім'я: ")
-            sock.send(name.encode())
-            return sock
+tb = CTkTextbox(window, width=380, height=280)
+tb.pack(pady=10, padx=10)
 
-        except:
-            print("Не вдалося з'єднатися, пробуємо ще раз...")
-            time.sleep(1)
+ent = CTkEntry(window, width=380)
+ent.pack(pady=10)
 
+b = CTkButton(window, width=380, text="OK")
+b.pack()
 
-client_socket = connect()
+# window.mainloop()
 
-
-def send_message():
-    while True:
-        msg = input()
-        if msg.lower() == "exit" or msg.lower() == "вихід":
-            client_socket.close()
-            break
-        client_socket.send(msg.encode())
-
-
-threading.Thread(target=send_message, daemon=True).start()
-
-
-while True:
-    try:
-        message = client_socket.recv(1024).decode().strip()
-        if message:
-            print(message)
-        else:
-            break
-    except:
-        print("Від'єднано від сервера")
-        break
