@@ -1,17 +1,16 @@
 from customtkinter import *
 
 window = CTk()
-window.geometry("400x400")
-window.title("ДОДАЙТЕ ВАШУ НАЗВУ")
+window.geometry("400x300")
+window.title("First App")
+window.configure(fg_color="gold")
 
-tb = CTkTextbox(window, width=380, height=280)
-tb.pack(pady=10, padx=10)
+lbl = CTkLabel(window,
+               text="Hello Logika!",  # пишіть це все в один рядок, будь ласка
+               width=400,  # пишіть це все в один рядок, будь ласка
+               height=150,  # пишіть це все в один рядок, будь ласка
+               text_color="navy",  # пишіть це все в один рядок, будь ласка
+               font=("Arial", 20, "bold"))  # пишіть це все в один рядок, будь ласка
+lbl.pack()
 
-ent = CTkEntry(window, width=380)
-ent.pack(pady=10)
-
-b = CTkButton(window, width=380, text="OK")
-b.pack()
-
-# window.mainloop()
-
+window.mainloop()
