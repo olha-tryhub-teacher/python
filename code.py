@@ -1,16 +1,23 @@
 from customtkinter import *
 
 window = CTk()
-window.geometry("400x300")
-window.title("First App")
-window.configure(fg_color="gold")
 
-lbl = CTkLabel(window,
-               text="Hello Logika!",  # пишіть це все в один рядок, будь ласка
-               width=400,  # пишіть це все в один рядок, будь ласка
-               height=150,  # пишіть це все в один рядок, будь ласка
-               text_color="navy",  # пишіть це все в один рядок, будь ласка
-               font=("Arial", 20, "bold"))  # пишіть це все в один рядок, будь ласка
-lbl.pack()
+btn_color = "black"
+text_color = "white"
+
+for i in range(8):
+    for j in range(8):
+        btn = CTkButton(window, width=70, height=70)
+        btn.grid(column=i, row=j)
+
+        if (i + j) % 2 == 0:
+            btn_color = "black"
+            text_color = "white"
+        else:
+            btn_color = "white"
+            text_color = "black"
+
+        btn.configure(fg_color=btn_color, text_color=text_color)
+
 
 window.mainloop()
