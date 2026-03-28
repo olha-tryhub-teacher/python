@@ -1,6 +1,5 @@
-x = int(input("Enter x:"))
-y = int(input("Enter y:"))
-if x > 0 and x < 10 and y > 0 and y < 10:
-    print("Pac-Man у зоні безпеки.")
-else:
-    print("Pac-Man не у зоні безпеки.")
+color = input("Введіть колір привида (червоний, синій, зелений, жовтий):").lower()
+if color == "синій" or color == "червоний":
+    print("Pac-Man програв.")
+elif color == "зелений" or color == "жовтий":
+    print("Pac-Man переміг.")
