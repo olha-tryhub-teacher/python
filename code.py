@@ -1,10 +1,12 @@
-comment = input("Введіть ваш коментар: ")
-count = 0
-for char in comment:
-    if char == " ":
+for i in range(3):
+    count = int(input("кількість товарів для замовлення?"))
+    if count > 10:
+        print("Перевищено ліміт! Повторіть спробу.")
+        count = -1
         continue
-    count += 1
-if count > max_count:
-    print("Коментар не буде опубліковано: досягнуто ліміт у 125 символів.")
-else:
-    print("Коментар було опубліковано!")
+    else:
+        print(f"Замовлено {count} товарів.")
+        break
+
+if count == -1:
+    print("Замовлення не прийнято.")
