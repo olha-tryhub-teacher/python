@@ -1,15 +1,19 @@
-print("🚴 Велосипедист починає свій шлях від старту до фінішу! 🚴")
-dist = int(input("Довжина траси: "))
-print("🏁" + dist * "➖" + "🚴" + "🏁")
+print("🎨 Художник малює квіткове поле!")
 
-move = 0
-while move < dist:
-    m = int(input("Скільки проїхав? "))
-    move += m
-    if move > dist:
-        print("Неможливо! Перепитай художника!")
-        move -= m  # Відкатити рух назад
-    else:
-        print("🏁" + (dist - move) * "➖" + "🚴" + move * "➖" + "🏁")
+# Розміри поля
+rows = int(input("Введыть ширину поля:"))
+cols =  int(input("Введіть довжину поля"))
 
-print("Велосипедист 🚴 успішно доїхав до фінішу! 🏁")
+# Малюємо поле
+for i in range(rows):
+    line = ""
+    for j in range(cols):
+        if (i + j) % 4 == 0:
+            line += "🌹"
+        elif (i + j) % 4 == 1:
+            line += "🌷"
+        elif (i + j) % 4 == 2:
+            line += "🌼"
+        else:
+            line += "🌸"
+    print(line)
