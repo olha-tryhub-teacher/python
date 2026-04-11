@@ -1,39 +1,29 @@
-from socket import *
-import threading
+from customtkinter import *
 
-server_socket = socket(AF_INET, SOCK_STREAM)
-server_socket.bind(('localhost', 8080))
-server_socket.listen(12)
-print("Сервер запущений...")
-
-clients = []
+name = "Оля"
 
 
-def broadcast(message):
-    for client in clients:
-        try:
-            client.send(f"{message}\n".encode())
-        except:
-            pass
+class MainWindow(CTk):
+    def __init__(self):
+        super().__init__()
+        self.geometry("400x300")
+        # main
+        self.username = name
+        self.name_lbl = CTkLabel(self, text="Привіт, " + self.username)
+        self.name_lbl.pack()
+        self.chat_field = CTkScrollableFrame(self)
+        self.chat_field.pack(fill="both", expand=True)
+
+        self.bottom_row = CTkFrame(self)
+        self.bottom_row.pack(fill="x")
+
+        self.message_entry = CTkEntry(self.bottom_row,
+                                      placeholder_text="Введіть повідомлення:",
+                                      height=40)
+        self.message_entry.pack(fill="x", side="left", expand=True)
+        self.send_button = CTkButton(self.bottom_row, text=">", width=50, height=40)
+        self.send_button.pack(side="left")
 
 
-def handle_client(client_socket):
-    name = client_socket.recv(1024).decode().strip()
-    broadcast(f"{name} приєднався до чату!")
-
-    while True:
-        try:
-            message = client_socket.recv(1024).decode().strip()
-            print(f"{name}: {message}")
-            broadcast(f"{name}: {message}")
-        except:
-            clients.remove(client_socket)
-            broadcast(f"{name} вийшов із чату!")
-            client_socket.close()
-            break
-
-
-while True:
-    client_socket, addr = server_socket.accept()
-    clients.append(client_socket)
-    threading.Thread(target=handle_client, args=(client_socket,), daemon=True).start()
+main_win = MainWindow()
+main_win.mainloop()
