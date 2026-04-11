@@ -1,14 +1,15 @@
-print("Архітектор хоче створити клумбу з трояндами 🌹!")
-height = input("Введіть висоту клумби: ")
-width = input("Введіть ширину клумби: ")
-if height.isdigit() and width.isdigit():
-    height = int(height)
-    width = int(width)
-    print(width * "🧱")
-    for i in range(height - 2):
-        print("🧱" + (width - 2) * "🌹" + "🧱")
-    print(width * "🧱")
+print("🚴 Велосипедист починає свій шлях від старту до фінішу! 🚴")
+dist = int(input("Довжина траси: "))
+print("🏁" + dist * "➖" + "🚴" + "🏁")
 
-    print("Клумба готова! Архітектор пишається вашою роботою!")
-else:
-    print("Розміри клумби мають бути числами!")
+move = 0
+while move < dist:
+    m = int(input("Скільки проїхав? "))
+    move += m
+    if move > dist:
+        print("Неможливо! Перепитай художника!")
+        move -= m  # Відкатити рух назад
+    else:
+        print("🏁" + (dist - move) * "➖" + "🚴" + move * "➖" + "🏁")
+
+print("Велосипедист 🚴 успішно доїхав до фінішу! 🏁")
