@@ -1,20 +1,8 @@
-from customtkinter import *
-from PIL import Image
-
-
-class AuthWindow(CTk):
-    def __init__(self):
-        super().__init__()
-        self.geometry("700x400")
-        self.title("Вхід")
-        self.resizable(True, False)
-        self.name = ""
-
-        # --- ліва частина --
-        self.left_frame = CTkFrame(self)
-        self.left_frame.pack(side="left", fill="both")
-
-        # ТУТ ЗМІНЮЄМО КАРТІНКУ ДЛЯ ФОНУ
-        img_ctk = CTkImage(light_image=Image.open("bg.png"), size=(450, 400))
-        self.img_label = CTkLabel(self.left_frame, text="Welcome", image=img_ctk, font=("Helvetica", 50, "bold"))
-        self.img_label.pack()
+print("Архітектор хоче побудувати піраміду з каменів 🧱!")
+height = int(input("Введіть висоту піраміди: "))
+if height > 0:
+  for i in range(height+1):
+     print(i* "🧱")
+  print("Піраміда готова! Архітектор вдячний за допомогу!")
+else:
+  print("Піраміда не може бути висотою 0!")
