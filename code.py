@@ -1,8 +1,14 @@
-print("Архітектор хоче побудувати піраміду з каменів 🧱!")
-height = int(input("Введіть висоту піраміди: "))
-if height > 0:
-  for i in range(height+1):
-     print(i* "🧱")
-  print("Піраміда готова! Архітектор вдячний за допомогу!")
+print("Архітектор хоче створити клумбу з трояндами 🌹!")
+height = input("Введіть висоту клумби: ")
+width = input("Введіть ширину клумби: ")
+if height.isdigit() and width.isdigit():
+  height = int(height)
+  width = int(width)
+  print(width*"🧱")
+  for i in range(height-2):
+    print("🧱"+(width-2)*"🌹"+"🧱")
+  print(width*"🧱")
+    
+  print("Клумба готова! Архітектор пишається вашою роботою!")
 else:
-  print("Піраміда не може бути висотою 0!")
+  print("Розміри клумби мають бути числами!")
