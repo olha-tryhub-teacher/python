@@ -1,11 +1,32 @@
-FROM python:3.12-slim-bullseye
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-WORKDIR /app
-RUN apt-get update && apt-get install -y gcc && rm -rf /var/lib/apt/lists/*
-COPY requirements.txt /app/
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . /app/
-RUN python manage.py collectstatic --noinput
-EXPOSE 8000
-CMD sh -c "python manage.py migrate && gunicorn your_project_name.wsgi -b 0.0.0.0:8000"
+from pygame import *
+
+init()
+
+size = 1000, 800
+window = display.set_mode(size)
+display.set_caption('Моя гра')
+clock = time.Clock()
+
+player = Rect(200, 200, 50, 50)
+player_speed = 5
+
+while True:
+    for e in event.get():
+       if e.type == QUIT:
+           quit()
+
+    keys = key.get_pressed()
+    if keys[K_w]:
+        player.y -= player_speed
+    if keys[K_s]:
+        player.y += player_speed
+    if keys[K_a]:
+        player.x -= player_speed
+    if keys[K_d]:
+        player.x += player_speed
+
+    window.fill((255, 255, 255))
+    draw.rect(window, (0, 200, 0), player)
+
+    display.update()
+    clock.tick(60)
