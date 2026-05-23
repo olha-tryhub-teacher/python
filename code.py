@@ -1,24 +1,19 @@
-# підключи свій модуль art
-from turtle import *
-
-def square(a, col):
+def square_fill(a, col):
     color(col)
-    for i in range(4):
-        fd(a)
-        lt(90)
+    begin_fill()
+    square(a, col)
+    end_fill()
 
 
-def rectangle(a, b, col):
+def rectangle_fill(a, b, col):
     color(col)
-    for i in range(2):
-        fd(a)
-        lt(90)
-        fd(b)
-        lt(90)
+    begin_fill()
+    rectangle(a, b, col)
+    end_fill()
 
 
-def triangle(a, col):
+def triangle_fill(a, col):
     color(col)
-    for i in range(3):
-        fd(a)
-        lt(120)
+    begin_fill()
+    triangle(a, col)
+    end_fill()
