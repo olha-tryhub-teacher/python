@@ -1,96 +1,22 @@
-# підключи свій модуль art
+# Напиши функцію christmas_tree
 from turtle import *
+from art import *
 
+def christmas_tree(x, y, a, col1, col2):
+    # Малюємо стовбур
+    start(x, y)
+    width(1)
+    square_fill(a, col1)
 
-def start(x, y):
-    penup()
-    goto(x, y)
-    pendown()
-
-
-def square(a, col):
-    color(col)
-    for i in range(4):
-        fd(a)
-        lt(90)
-
-
-def rectangle(a, b, col):
-    color(col)
-    for i in range(2):
-        fd(a)
-        lt(90)
-        fd(b)
-        lt(90)
-
-
-def triangle(a, col):
-    color(col)
+    # Малюємо гілки (три яруси)
+    x, y = x - a, y + a
+    width(1)
     for i in range(3):
-        fd(a)
-        lt(120)
+        start(x, y)
+        # Передаємо col2 як колір хвої
+        triangle_fill(a * 3, col2)
+        y += a
 
-
-def parallelogram(a, b, col):
-    color(col)
-    for i in range(2):
-        fd(a)
-        lt(125)
-        fd(b)
-        lt(55)
-
-
-def polygon(a, n, col):
-    color(col)
-    angel = 360 / n
-    for i in range(n):
-        fd(a)
-        lt(angel)
-
-
-def my_circle(a, col):
-    color(col)
-    circle(a)
-
-
-def square_fill(a, col):
-    color(col)
-    begin_fill()
-    square(a, col)
-    end_fill()
-
-
-def rectangle_fill(a, b, col):
-    color(col)
-    begin_fill()
-    rectangle(a, b, col)
-    end_fill()
-
-
-def triangle_fill(a, col):
-    color(col)
-    begin_fill()
-    triangle(a, col)
-    end_fill()
-
-
-def parallelogram_fill(a, b, col):
-    color(col)
-    begin_fill()
-    parallelogram(a, b, col)
-    end_fill()
-
-
-def polygon_fill(a, n, col):
-    color(col)
-    angel = 360 / n
-    begin_fill()
-    polygon(a, n, col)
-    end_fill()
-
-
-def circle_fill(a, col):
-    color(col)
-    begin_fill()
-    circle(a)
-    end_fill()
+speed(0)
+# Приклад виклику:
+christmas_tree(0, -100, 30, "brown", "green")
