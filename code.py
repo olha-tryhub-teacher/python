@@ -8,7 +8,7 @@
                 continue
 
             try:
-                packet = "|".join([f"{p["id"]},{p["x"]},{p["y"]},{p["r"]},{p["name"]}" for c, p in players.items() if c != conn and c not in eliminated]) + "|"
+                packet = "|".join([f"{p['id']},{p['x']},{p['y']},{p['r']},{p['name']}" for c, p in players.items() if c != conn and c not in eliminated]) + "|"
                 conn.send(packet.encode())
             except:
                 to_remove.append(conn)
@@ -31,3 +31,4 @@ while True:
         conn.send(f"{id_counter},0,0,20".encode())
     except:
         pass
+
