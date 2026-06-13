@@ -1,13 +1,12 @@
-from turtle import *
-from art import *
-speed(100)
-pixel_size = 10
-x,y = -100,100
-for line in pic_map:
-    for num in line:
-        start(x,y)
-        c = colors_map[int(num)]
-        square_fill(pixel_size,c)
-        x+=pixel_size
-    x = -100
-    y -= pixel_size 
+def draw_field(x_start, y_start, size, col):
+    width(4)
+    x, y = x_start, y_start
+    for i in range(3):
+        for j in range(3):
+            start(x, y)
+            square(size, col)
+            x += size
+        x = x_start
+        y -= size
+
+draw_field(-150, 150, size, "blue")
