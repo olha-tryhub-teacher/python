@@ -1,6 +1,6 @@
 from turtle import *
 from art import*
-from cross_dot import *
+from cross import *
 from random import randint
 speed(0)
 field("green")
