@@ -1,4 +1,14 @@
+#підключи свій модуль art 
+from turtle import *
+from art import *
+
+x_start,y_start = -150,50
+size = 100
+
 def draw_field(x_start, y_start, size, col):
+    #твій код
+    speed(0)
+    ht()
     width(4)
     x, y = x_start, y_start
     for i in range(3):
