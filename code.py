@@ -1,5 +1,6 @@
 from turtle import *
 from art import *
+speed(100)
 pixel_size = 10
 x,y = -100,100
 for line in pic_map:
