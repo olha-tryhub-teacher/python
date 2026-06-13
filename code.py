@@ -1,22 +1,18 @@
-#підключи свій модуль art 
 from turtle import *
 from art import *
 
-x_start,y_start = -150,50
-size = 100
+speed(0)
+ht()
 
-def draw_field(x_start, y_start, size, col):
-    #твій код
-    speed(0)
-    ht()
+
+def cross(x, y, size, col):
+    color(col)
+    start(x, y)
     width(4)
-    x, y = x_start, y_start
-    for i in range(3):
-        for j in range(3):
-            start(x, y)
-            square(size, col)
-            x += size
-        x = x_start
-        y -= size
+    setheading(45)
+    forward(1.4 * size)
+    start(x + size, y)
+    setheading(135)
+    forward(1.4 * size)
 
-draw_field(-150, 150, size, "blue")
+cross(150, 0, 120, "green")
