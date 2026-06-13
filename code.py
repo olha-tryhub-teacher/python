@@ -1,21 +1,27 @@
-from turtle import *
+def check_win():
+    # 1 = 2 = 3
+    if playing_field[1] == playing_field[2] == playing_field[3] :
+        return playing_field[1]
+    # 4 = 5 = 6
+    if playing_field[4] == playing_field[5] == playing_field[6] :
+        return playing_field[4]
+    # 7 = 8 = 9
+    if playing_field[7] == playing_field[8] == playing_field[9] :
+        return playing_field[7]
+    # 1 = 4 = 7
+    if playing_field[1] == playing_field[4] == playing_field[7] :
+        return playing_field[1]
+    # 2 = 5 = 8
+    if playing_field[2] == playing_field[5] == playing_field[8] :
+        return playing_field[2]
+    # 3 = 6 = 9
+    if playing_field[3] == playing_field[6] == playing_field[9] :
+        return playing_field[3]
+    # 1 = 5 = 9
+    if playing_field[1] == playing_field[5] == playing_field[9] :
+        return playing_field[1]
+    # 3 = 5 = 7
+    if playing_field[3] == playing_field[5] == playing_field[7] :
+        return playing_field[3]
 
-playingField = [-1, -1, -1, -1, -1, -1, -1, -1, -1]
-
-def move_player(player, draw_function):
-    if player == 0:
-        print("Ходить нулик.Введіть номер клiтинки:")
-        c = "#9b59b6"
-    else:
-        print("Ходить хрестик.Введіть номер клiтинки:")
-        c = "#e74c3c"
-    cell = int(input())
-
-    while playingField[cell - 1] != -1:
-        print("Ця клітинка вже зайняти. Оберіть іншу!")
-        cell = int(input())
-    cell = cell - 1
-    i, j = cell % 3, cell // 3
-    x, y = xCor[i], yCor[j]
-    draw_function(x, y, size, c)
-    playingField[cell] = player
+    return -1  # Ніхто не виграв
