@@ -1,14 +1,14 @@
-def write_right(letter, word):
-    start(-170, 105)
-    penup()
+# Функція для малювання неправильних літер
+def write_wrong(letter):
     color("black")
-    setheading(0)
-    count = 0
-    for w in word:
-        if w == letter:
-            pendown()
-            write(letter, font=("Arial", 32))
-            penup()
-            count += 1
-        fd(45)
-    return count
+    write(letter, font=("Arial", 28))
+    color("red")
+    width(2)
+    setheading(45)
+    fd(30)
+    setheading(180)
+    penup()
+    fd(20)
+    setheading(270 + 45)
+    pendown()
+    fd(30)
