@@ -1,117 +1,66 @@
+from turtle import *
 from art import *
-from random import randint
+from guess_word import *
+from random import choice
 
-# координати квітки
-x_start,y_start = 400,-150
+## Список кольорів пелюсток
+colors = ["#c0392b", "#8e44ad", "#2471a3", "#138d75", "#f1c40f", "#e74c3c", "#5dade2"]
+
+# координати для відображення неправильних літер
+x_wrong, y_wrong = -170, 50
 
 # радіус пелюстки та листочків
 r = 95
 # стартовий кут для пелюсток квітки
-starting_angle = 360/7
+starting_angle = 360 / 7
 
-# лічильники вірних та невірних слів
+# лічильники правильних та неправильних слів
 count_right = 0
 count_wrong = 0
 
+speed(0)
+# список слів для гри
+words = ["привіт"]
+# випадкове слово для старту гри
+word = choice(words)
 
-# Функція для малювання однієї пелюстки
-def draw_petal(col, radius):
-    color(col)
-    begin_fill()
-    circle(radius, 60)  # Півколо
-    left(120)  # Поворот для іншої сторони
-    circle(radius, 60)  # Півколо
-    end_fill()
+# малюємо завдання
+write_ask(word)
+# малюємо квітку
+draw_flower(colors)
 
+# ігровий цикл
+while True:
+    # запитуємо літеру у гравця
+    letter = input("Введіть літеру:")
+    # первіряємо чи є така літера у слові
+    if letter in word:
+        # малюємо правильну/ні літери ТА рахуємо їх кількіст у слові
+        c = write_right(letter, word)
+        # збільшуємо лічильник вріних літер
+        count_right += c
+    # якщо літери немає у слові
+    else:
+        # малюємо неправильну літеру
+        start(x_wrong, y_wrong)
+        x_wrong += 45
+        write_wrong(letter)
+        # зібльшуємо лічильник неправильних літер
+        count_wrong += 1
+        # ЗАПАМ'ЯТАТИ колір пелюстки
+        col = colors[count_wrong - 1]
+        # ЗАМІНИТИ цей колір на білий
+        colors[count_wrong - 1] = "white"
+        # малюємо квітку заново та впавшу пелюстку
+        draw_down_petal(colors, col)
 
-# Функція для малювання стовбура
-def draw_stem():
-    start(x_start, y_start)
-    setheading(90)
-    color("green")
-    width(20)
-    fd(50)
-    setheading(135)
-    draw_petal("green", 100)
-    setheading(25)
-    draw_petal("green", 65)
-    setheading(90)
-    fd(150)
+    # перевірка програшу
+    if count_wrong == 7:
+        end_game("red", "Ти програв :(")
+        break
+    # перевірка виграшу
+    if count_right == len(word):
+        end_game("blue", "Ти виграв!")
+        break
 
-# Функція для малювання пелюсток
-def draw_petals(colors):
-    # Малювання квітки
-    width(20)
-    k = starting_angle
-    for i in range(7):
-        start(x_start,y_start + 200)
-        setheading(k)
-        draw_petal(colors[i], r)
-        k += starting_angle
-
-# Функція для малювання пелюстки внизу і перемалювання всіх інших
-def draw_down_petal(colors, col):
-    draw_flower(colors)
-    xd = randint(x_start - 50, x_start + 50)
-    start(xd, y_start)
-    h = randint(180, 360)
-    setheading(h)
-    width(20)
-    draw_petal(col, r)
-
-
-# Функція для малювання всієї квітки
-def draw_flower(colors):
-    draw_stem()
-    draw_petals(colors)
-
-
-# Функція для малювання плосі для правильних літер
-def write_ask(word):
-    start(-170, 100)
-    setheading(0)
-    width(4)
-    color("black")
-    for w in word:
-        fd(30)
-        penup()
-        fd(15)
-        pendown()
-
-
-# Функція для малювання неправильних літер
-def write_wrong(letter):
-    color("black")
-    write(letter, font=("Arial", 28))
-    color("red")
-    width(2)
-    setheading(45)
-    fd(30)
-    setheading(180)
-    penup()
-    fd(20)
-    setheading(270 + 45)
-    pendown()
-    fd(30)
-
-# Функція для малювання правильних літер
-def write_right(letter, word):
-    start(-170, 105)
-    penup()
-    color("black")
-    setheading(0)
-    count = 0
-    for w in word:
-        if w == letter:
-            pendown()
-            write(letter, font=("Arial", 32))
-            penup()
-            count += 1
-        fd(45)
-    return count
-
-# Функція для малювання результату гри
-def end_game(col, txt):
-    start(-50, -50)
-    color(col)
-    write(txt, font=("Arila", 50))
+done()
