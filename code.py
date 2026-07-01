@@ -1,192 +1,127 @@
-# === СТВОРЕННЯ ОБ’ЄКТІВ ===
+from math import hypot
+from pygame import *
+from random import randint
+from socket import socket, AF_INET, SOCK_STREAM
+from threading import Thread
+
+# Налаштування мережі
+HOST = "127.0.0.1"
+PORT = 5000
+sock = socket(AF_INET, SOCK_STREAM)
+sock.connect((HOST, PORT))
+
+# Отримуємо свої дані при старті
+resv_data = sock.recv(64).decode().split(",")
+my_id, my_x, my_y, my_r = map(int, resv_data)
+
+# Налаштування вікна
+size = (1000, 800)
+init()
+window = display.set_mode(size)
+clock = time.Clock()
+
+all_players = {}  # Словник {id: [x, y, r]}
 
 
-# Створення пера для малювання
-def create_pen():
-    t = create_t(0,0,"turtle", "black")
+def receive_data():
+    global all_players, lose
+    while True:
+        try:
+            data = sock.recv(4096).decode()
+            if "LOSE" in data:
+                lose = True
+            elif data:
+                # 1. Створюємо тимчасовий словник
+                temp_players = {}
+
+                for p in data.split("|"):
+                    if "," in p:
+                        parts = p.split(",")
+                        if len(parts) >= 4:
+                            pid = int(parts[0])
+                            if pid != my_id:
+                                temp_players[pid] = [int(parts[1]), int(parts[2]), int(parts[3])]
+
+                # 2. Повністю замінюємо старі дані новими.
+                # Тих, кого з'їли, тут уже не буде!
+                all_players = temp_players
+        except:
+            break
+
+Thread(target=receive_data, daemon=True).start()
 
 
-    # Обробка перетягування мишкою
-    def on_drag(x, y):
-        if abs(x) < max_x and abs(y) < max_y:
-            t.goto(x,y)
-    t.ondrag(on_drag)
+class Ball:
+    def __init__(self, x, y, radius, color, speed=0):
+        self.x, self.y = x, y
+        self.radius = radius
+        self.color = color
+        self.base_speed = speed
+        self.scale = 1.0
+        self.growth_limit = 60
 
+    def update_player(self, cells):
+        # Масштабування
+        self.scale = self.growth_limit / self.radius if self.radius > self.growth_limit else 1.0
 
-    # Збільшення товщини пера
-    def width_plus_t():
-        t.width(t.width() + 1)
-        label_width.write_t(f"Width:{pen.width()}")
+        keys = key.get_pressed()
+        speed = 15 * self.scale
+        if keys[K_UP]: self.y -= speed
+        if keys[K_DOWN]: self.y += speed
+        if keys[K_LEFT]: self.x -= speed
+        if keys[K_RIGHT]: self.x += speed
 
+        # Логіка поїдання (спрощено)
+        for cell in cells[:]:
+            if self.collidecircle(cell):
+                self.radius += cell.radius * 0.2
+                cells.remove(cell)
 
-    # Зменшення товщини пера
-    def width_minus_t():
-        if t.width() > 0:
-            t.width(t.width() - 1)
-            label_width.write_t(f"Width:{pen.width()}")
-    t.width_plus_t = width_plus_t
-    t.width_minus_t =  width_minus_t
+    def draw(self, surface, camera_x, camera_y, camera_scale):
+        sx = int((self.x - camera_x) * camera_scale + size[0] // 2)
+        sy = int((self.y - camera_y) * camera_scale + size[1] // 2)
+        r = int(self.radius * camera_scale)
+        draw.circle(surface, self.color, (sx, sy), max(2, r))
 
+    def collidecircle(self, ball2):
+        distance = hypot(self.x - ball2.x, self.y - ball2.y)
+        return distance < (self.radius + ball2.radius)
 
-    # Обробка кліку по полотну — переміщення пера
-    def on_click(x, y):
-        if abs(x) < max_x and abs(y) < max_y:
-            go_to(t, x, y)
-    t.on_click = on_click
+# Ініціалізація
+ball = Ball(my_x, my_y, my_r, (0, 255, 100), speed=15)
+cells = [Ball(randint(-2000, 2000), randint(-2000, 2000), 10, "#E8B888") for _ in range(300)]
+f = font.Font(None, 50)
+running, lose = True, False
 
+while running:
+    for e in event.get():
+        if e.type == QUIT: running = False
 
-    # Обробка клавіш для переміщення
-    def move_left():
-        t.setheading(180)
-        t.fd(2)
-    def move_right():
-        t.setheading(0)
-        t.fd(2)
-    def move_up():
-        t.setheading(90)
-        t.fd(2)
-    def move_down():
-        t.setheading(270)
-        t.fd(2)
-    t.move_left = move_left
-    t.move_right = move_right
-    t.move_up = move_up
-    t.move_down = move_down
+    window.fill((40, 40, 40))
 
+    if not lose:
+        ball.update_player(cells)
+        # Відправка своїх координат на сервер
+        sock.send(f"{my_id},{int(ball.x)},{int(ball.y)},{int(ball.radius)},Player".encode())
 
-    return t
+    # Малювання яблук
+    for cell in cells:
+        cell.draw(window, ball.x, ball.y, ball.scale)
 
+    # Малювання ворогів
+    for pid, data in all_players.items():
+        # Малюємо ворога як червоне коло
+        ox, oy, orad = data
+        sx = int((ox - ball.x) * ball.scale + size[0] // 2)
+        sy = int((oy - ball.y) * ball.scale + size[1] // 2)
+        draw.circle(window, (255, 50, 50), (sx, sy), max(4, int(orad * ball.scale)))
 
-# Створення текстової позначки
-def create_label(x, y, col, txt):
-    t = create_t(x, y, "turtle", col)
-    t.ht()
-    # Виведення тексту
-    def write_t(txt):
-        t.clear()
-        t.write(txt, font=("Arial", 16))
-    t.write_t = write_t
-    t.write_t(txt)
-    return t
-
-
-# Створення кнопки з подією
-def create_button(x, y, sh, col, func):
-    t = create_t(x, y, sh, col)
-    t.my_color = col
-
-
-    # Подія: натискання кнопки
-    def on_click(x, y):
-        t.color("black", t.my_color)  # коротка зміна кольору як візуальний ефект
-        func()
-        t.color(t.my_color)
-    t.onclick(on_click)
-
-
-    return t
-
-
-# Створення кольорової кнопки (окрема логіка)
-def create_btn_color(x, y, col):
-    t = create_t(x, y, "circle", col)
-    t.my_color = col
-
-
-    # Подія: змінити колір пера
-    def new_color(x, y):
-        t.color("black", t.my_color)  # анімація натиснення
-        pen.color(t.my_color)
-        t.color(t.my_color)
-    t.onclick(new_color)
-
-
-    return t
-
-
-# === ОФОРМЛЕННЯ ІНТЕРФЕЙСУ ===
-
-
-# Малюємо основну рамку і панель
-t = create_t(-1*max_x, -1*max_y, "turtle","black")
-t.ht()
-t.width(7)
-t.pd()
-draw_rect(t, 2*max_x, 2*max_y)
-
-
-# Верхня панель
-go_to(t, -1*max_x, max_y)
-t.color("black", "violet")
-t.begin_fill()
-draw_rect(t, 2*max_x, 60)
-t.end_fill()
-
-
-# === ОБРОБНИКИ ПОДІЙ ===
-
-
-# Вмикання/вимикання заливки
-def begin_end_fill():
-    # grey - не активна, red - закінчити, green - почати
-    if btn_fill.my_color == "grey" or btn_fill.my_color == "red":
-        pen.begin_fill()
-        col = "green"
-        txt = "EF"  # End Fill
+    if not lose:
+        ball.draw(window, ball.x, ball.y, 1.0 if ball.radius < 60 else ball.scale)
     else:
-        pen.end_fill()
-        col = "red"
-        txt = "BF"  # Begin Fill
-    btn_fill.color(col)
-    btn_fill.my_color = col
-    label_fill.color(col)
-    label_fill.write_t(txt)
+        window.blit(f.render("U lose!", 1, (244, 0, 0)), (400, 500))
 
+    display.update()
+    clock.tick(60)
 
-# === СТВОРЕННЯ ГОЛОВНИХ ЕЛЕМЕНТІВ ===
-
-
-pen  = create_pen()  # головне перо
-
-
-# Кнопка очистки
-label_clear = create_label(-164, 145, "white", "Clear")
-btn_clear = create_button(-100, 152, "square", "white", pen.clear)
-
-
-# Кнопка заливки
-label_fill = create_label(-80, 145, "grey", "Fill")
-btn_fill = create_button(-40, 152, "circle", "grey", begin_end_fill)
-
-
-# Індикатор товщини пера + кнопки зміни
-label_width = create_label(2, 145, "black", f"Width:{pen.width()}")
-btn_width_plus = create_button(-10, 164, "square", "yellow", pen.width_plus_t)
-btn_width_minus = create_button(-10, 140, "square", "blue", pen.width_minus_t)
-
-
-# Кнопки зміни кольору
-x, y = 90, 164
-colors = ["navy", "purple", "gold", "lightgreen", "crimson", "black"]
-for i in range(6):
-    if i == 3:
-        x, y = 90, 140  # перенесення на новий ряд
-    btn_col = create_btn_color(x, y, colors[i])
-    x += 30
-
-
-# === ПІДПИСКА НА ПОДІЇ ===
-
-
-screen = getscreen()
-screen.onclick(pen.on_click)           # клік по робочій області — переміщення пера
-screen.onkey(pen.move_left, "Left")    # стрілки — керування
-screen.onkey(pen.move_right, "Right")
-screen.onkey(pen.move_up, "Up")
-screen.onkey(pen.move_down, "Down")
-screen.listen()
-
-
-# === ГОТОВО ДО РОБОТИ ===
-# протестувати проєкт
-done()
+quit()
