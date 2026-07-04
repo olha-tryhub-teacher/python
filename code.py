@@ -1,23 +1,23 @@
-from pygame import *
-import json
-import os
+running = True
+while running:
+    window.fill((255, 255, 255))
+    diff_text = main_font.render("Складність: " + difficulties[current_index], True, (0, 0, 0))
+    window.blit(diff_text, (180, 20))
+    play_button.draw()
+    settings_button.draw()
+    exit_button.draw()
 
-window_size = 600, 400
-window = display.set_mode(window_size)
-display.set_caption("Меню зі складністю")
-font.init()
-main_font = font.Font(None, 36)
+    display.update()
 
-# JSON збереження
-filename = "settings.json"
-difficulties = ["low", "medium", "hard"]
-current_index = 0
-
-if os.path.exists(filename):
-    with open(filename, "r") as f:
-        data = json.load(f)
-        if data.get("difficulty") in difficulties:
-            current_index = difficulties.index(data["difficulty"])
-else:
-    with open(filename, "w") as f:
-        json.dump({"difficulty": difficulties[0]}, f)
+    for e in event.get():
+        if e.type == QUIT:
+            running = False
+        if play_button.is_clicked(e):
+            print("Гра запускається зі складністю:", difficulties[current_index])
+        if settings_button.is_clicked(e):
+            current_index = (current_index + 1) % len(difficulties)
+            with open(filename, "w") as f:
+                json.dump({"difficulty": difficulties[current_index]}, f)
+        if exit_button.is_clicked(e):
+            print("Вихід...")
+            running = False
