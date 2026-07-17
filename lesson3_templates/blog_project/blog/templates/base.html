@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Мій Блог{% endblock %}</title>
+</head>
+<body>
+
+    <header>
+        <a href="{% url 'blog:post_list' %}">Мій Особистий Блог</a>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>{% now "Y" %} Усі права захищені</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }} — Деталі поста{% endblock %}
+
+{% block content %}
+    <p><a href="{% url 'blog:post_list' %}">← Назад до всіх статей</a></p>
+
+    <article>
+        <h1>{{ post.title }}</h1>
+        <p><small>Дата публікації: {{ post.created_at|date:"d.m.Y H:i" }}</small></p>
+        <hr>
+        
+        <div>
+            {{ post.content|linebreaks }}
+        </div>
+    </article>
+{% endblock %}

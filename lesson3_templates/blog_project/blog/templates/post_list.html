@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Усі публікації — Блог{% endblock %}
+
+{% block content %}
+    <h1>Останні записи</h1>
+
+    <ul>
+        {% for post in posts %}
+            <li>
+                <h2>
+                    <a href="{% url 'blog:post_detail' post.pk %}">{{ post.title }}</a>
+                </h2>
+                <small>Опубліковано: {{ post.created_at|date:"d.m.Y H:i" }}</small>
+            </li>
+        {% empty %}
+            <li>Записів у блозі поки що немає.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
