@@ -1,3 +1,7 @@
+from turtle import *
+from random import randint
+
+
 def create_turtle(x, y, sh, col):
     t = Turtle()
     t.pu()
