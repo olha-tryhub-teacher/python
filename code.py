@@ -1,27 +1,28 @@
-# --- ЧАСТИНА 2: Базові діаграми ---
-import matplotlib.pyplot as plt
-import seaborn as sns
+# 1
+from turtle import *
+t1 = Turtle()
+t2 = Turtle()
+t3 = Turtle()
 
+t1.color("black")
+t2.color("red")
+t3.color("orange")
 
-# Діаграма 1: Гістограма розподілу рейтингів
-plt.figure(figsize=(10, 6))
-sns.histplot(df['Rating'], bins=30, kde=True, color='skyblue')
-plt.title('Розподіл рейтингів додатків')
-plt.xlabel('Рейтинг')
-plt.ylabel('Кількість')
-plt.show()
+t1.width(50)
+t2.width(50)
+t3.width(50)
 
-# Діаграма 2: Топ-10 категорій (Стовпчикова діаграма)
-plt.figure(figsize=(12, 6))
-top_categories = df['Category'].value_counts().head(10)
-sns.barplot(x=top_categories.values, y=top_categories.index, palette='viridis')
-plt.title('Топ-10 категорій за кількістю додатків')
-plt.xlabel('Кількість')
-plt.show()
+t1.penup()
+t1.goto(-150,50)
+t1.pendown()
+t1.fd(300)
 
-# Діаграма 3: Безкоштовні vs Платні (Кругова діаграма)
-plt.figure(figsize=(7, 7))
-type_counts = df['Type'].value_counts()
-plt.pie(type_counts, labels=type_counts.index, autopct='%1.1f%%', startangle=140, colors=['#66b3ff','#ff9999'])
-plt.title('Співвідношення типів додатків')
-plt.show()
+t2.penup()
+t2.goto(-150,0)
+t2.pendown()
+t2.fd(300)
+
+t3.penup()
+t3.goto(-150,-50)
+t3.pendown()
+t3.fd(300)
