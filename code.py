@@ -1,28 +1,15 @@
-# 1
-from turtle import *
-t1 = Turtle()
-t2 = Turtle()
-t3 = Turtle()
+redPainter.setheading(90)
+greenPainter.setheading(210)
+bluePainter.setheading(330)
 
-t1.color("black")
-t2.color("red")
-t3.color("orange")
-
-t1.width(50)
-t2.width(50)
-t3.width(50)
-
-t1.penup()
-t1.goto(-150,50)
-t1.pendown()
-t1.fd(300)
-
-t2.penup()
-t2.goto(-150,0)
-t2.pendown()
-t2.fd(300)
-
-t3.penup()
-t3.goto(-150,-50)
-t3.pendown()
-t3.fd(300)
+redPainter.speed(0)
+bluePainter.speed(0)
+bluePainter.speed(0)
+# ваш код
+for i in range(150):
+    redPainter.fd(1)
+    redPainter.lt(2)
+    greenPainter.fd(1)
+    greenPainter.lt(2)
+    bluePainter.fd(1)
+    bluePainter.lt(2)
