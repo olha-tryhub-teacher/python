@@ -1,12 +1,12 @@
-from turtle import *
-from random import randint
-
-
-def create_turtle(x, y, sh, col):
-    t = Turtle()
-    t.pu()
-    t.goto(x, y)
-    t.width(10)
-    t.shape(sh)
-    t.color(col)
-    return t
+# побудувати трасу, де є старт та фініш
+def track():
+    tr = create_turtle(-150, -150, "triangle", "green")
+    tr.setheading(90)
+    tr.pendown()
+    tr.forward(300)
+    tr.color("red")
+    tr.width(20)
+    tr.penup()
+    tr.goto(300, -150)
+    tr.pendown()
+    tr.forward(300)
