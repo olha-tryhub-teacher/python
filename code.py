@@ -1,73 +1,82 @@
-# ваш код
-from turtle import *
-from random import randint
 
-hideturtle()
+# 2. Клас яблука
+class Apple(Turtle):
+    def __init__(self):
+        super().__init__()
+        self.shape("circle")
+        self.penup()
+        self.color(choice(["red", "gold", "blue"]))
+        self.goto(randint(-130, 130), 150)
 
+    def fall(self):
+        self.sety(self.ycor() - 5)
 
-def create_t(x, y, h, col):
-    t = Turtle()
-    t.color(col)
-    t.shape("turtle")
-    t.setheading(h)
-    t.penup()
-    t.goto(x, y)
-    t.pendown()
-    return t
+# 3. Налаштування екрана
+screen = Screen()
+screen.bgcolor("black")
 
+# Малюємо біле поле за допомогою циклу (працює в усіх браузерах)
+pole = Turtle()
+pole.hideturtle()
+pole.color("white")
+pole.penup()
+pole.goto(-150, 150)
+pole.begin_fill()
+for _ in range(4):
+    pole.forward(300)
+    pole.right(90)
+pole.end_fill()
 
-# 1.Ігрове поле
-screen = getscreen()
-screen.bgcolor("yellow")
+player = Player()
+screen.listen()
+screen.onkey(player.move_l, "Left")
+screen.onkey(player.move_r, "Right")
 
-# 2.Лейбли-лічильник
-click = create_t(200, 100, 0, "blue")
-click.count = 0
-click.hideturtle()
-click.write(f"Click: {click.count}", font=("Arial", 24))
+# Лічильники та текст
+score = {"catch": 0, "miss": 0}
+writer = Turtle()
+writer.hideturtle()
+writer.color("white")
+writer.penup()
 
-# те саме тільки раннер
-runner = create_t(200, 150, 0, "red")
-runner.count = 0
-runner.hideturtle()
-runner.write(f"Runner: {runner.count}", font=("Arial", 24))
+def update_score():
+    writer.clear()
+    writer.goto(-140, 160)
+    writer.write(f"Miss: {score['miss']}  Catch: {score['catch']}", font=("Arial", 16, "normal"))
 
-# 3.Черепашки-втікачки
-# 3.1 створити черепашок
-t1 = create_t(0, 0, 0, "pink")
-
-
-# 3.2 функції-обробники кліку
-def click1(x, y):
-    t1.lt(randint(30, 200))
-    click.count += 1
-    click.clear()
-    click.write(f"Click: {click.count}", font=("Arial", 24))
-
-
-# 3.3 підписка на подію клік по черепашках
-t1.onclick(click1)
+update_score()
+apples = []
 
 # 4. Ігровий цикл
-while click.count < 20 and runner.count < 4:
-    if abs(t1.xcor()) < 200 and abs(t1.ycor()) < 200:
-        t1.forward(2)
+def game_loop():
+    if randint(1, 25) == 1:
+        apples.append(Apple())
+
+    for apple in apples[:]:
+        apple.fall()
+
+        # Спіймано
+        if apple.distance(player) < 20:
+            apple.hideturtle()
+            apples.remove(apple)
+            score["catch"] += 1
+            update_score()
+
+        # Впало за межі
+        elif apple.ycor() < -150:
+            apple.hideturtle()
+            apples.remove(apple)
+            score["miss"] += 1
+            update_score()
+
+    # Перевірка кінця гри
+    if score["miss"] >= 3:
+        writer.goto(-60, 0)
+        writer.write("You lose", font=("Arial", 20, "bold"))
+    elif score["catch"] >= 10:
+        writer.goto(-50, 0)
+        writer.write("You win", font=("Arial", 20, "bold"))
     else:
-        runner.count += 1
-        runner.clear()
-        runner.write(f"Runner: {runner.count}", font=("Arial", 24))
+        screen.ontimer(game_loop, 30)
 
-
-# 5. Переврка виграшу/програшу
-if click.count >= 20:
-    click.penup()
-    click.goto(0, 0)
-    click.write("You winn", font=("Arial", 40))
-# те саме тільки раннер
-if runner.count >= 4:
-    runner.penup()
-    runner.goto(0, 0)
-    runner.write("You lose", font=("Arial", 40))
-
-
-done()
+game_loop()
