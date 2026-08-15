@@ -1,82 +1,119 @@
+from kivy.app import App
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
+from kivy.uix.label import Label
+from kivy.uix.image import Image
+from kivy.core.window import Window
 
-# 2. Клас яблука
-class Apple(Turtle):
-    def __init__(self):
-        super().__init__()
-        self.shape("circle")
-        self.penup()
-        self.color(choice(["red", "gold", "blue"]))
-        self.goto(randint(-130, 130), 150)
+# Розмір вікна (для ПК, на Android не впливає)
+Window.size = (450, 900)
 
-    def fall(self):
-        self.sety(self.ycor() - 5)
 
-# 3. Налаштування екрана
-screen = Screen()
-screen.bgcolor("black")
+class Menu(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
-# Малюємо біле поле за допомогою циклу (працює в усіх браузерах)
-pole = Turtle()
-pole.hideturtle()
-pole.color("white")
-pole.penup()
-pole.goto(-150, 150)
-pole.begin_fill()
-for _ in range(4):
-    pole.forward(300)
-    pole.right(90)
-pole.end_fill()
+        # Основний контейнер
+        layout = BoxLayout(orientation="vertical",
+                           padding="20dp", spacing="20dp")
 
-player = Player()
-screen.listen()
-screen.onkey(player.move_l, "Left")
-screen.onkey(player.move_r, "Right")
+        # Картинка у верхній частині меню
+        img_title = Image(source="img.png", size_hint=(1, 0.5))
+        layout.add_widget(img_title)
 
-# Лічильники та текст
-score = {"catch": 0, "miss": 0}
-writer = Turtle()
-writer.hideturtle()
-writer.color("white")
-writer.penup()
+        # Текстовий заголовок
+        lbl_title = Label(text="Main Menu", font_size="40sp",
+                          size_hint=(1, 0.2))
+        layout.add_widget(lbl_title)
 
-def update_score():
-    writer.clear()
-    writer.goto(-140, 160)
-    writer.write(f"Miss: {score['miss']}  Catch: {score['catch']}", font=("Arial", 16, "normal"))
+        # Кнопка Play
+        btn_play = Button(text="PLAY", size_hint=(1, 0.15),
+                          font_size="20sp")
+        btn_play.bind(on_press=self.go_game)
+        layout.add_widget(btn_play)
 
-update_score()
-apples = []
+        # Кнопка Settings
+        btn_settings = Button(text="SETTINGS", size_hint=(1, 0.15),
+                              font_size="20sp")
+        btn_settings.bind(on_press=self.go_settings)
+        layout.add_widget(btn_settings)
 
-# 4. Ігровий цикл
-def game_loop():
-    if randint(1, 25) == 1:
-        apples.append(Apple())
+        # Кнопка Exit
+        btn_exit = Button(text="EXIT", size_hint=(1, 0.15),
+                          font_size="20sp")
+        btn_exit.bind(on_press=self.exit_app)
+        layout.add_widget(btn_exit)
 
-    for apple in apples[:]:
-        apple.fall()
+        self.add_widget(layout)
 
-        # Спіймано
-        if apple.distance(player) < 20:
-            apple.hideturtle()
-            apples.remove(apple)
-            score["catch"] += 1
-            update_score()
+    # Перехід до екрана гри
+    def go_game(self, *args):
+        self.manager.current = "game"
 
-        # Впало за межі
-        elif apple.ycor() < -150:
-            apple.hideturtle()
-            apples.remove(apple)
-            score["miss"] += 1
-            update_score()
+    # Перехід до екрана налаштувань
+    def go_settings(self, *args):
+        self.manager.current = "settings"
 
-    # Перевірка кінця гри
-    if score["miss"] >= 3:
-        writer.goto(-60, 0)
-        writer.write("You lose", font=("Arial", 20, "bold"))
-    elif score["catch"] >= 10:
-        writer.goto(-50, 0)
-        writer.write("You win", font=("Arial", 20, "bold"))
-    else:
-        screen.ontimer(game_loop, 30)
+    # Вихід з програми
+    def exit_app(self, *args):
+        app.stop()
 
-game_loop()
+
+class Game(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        # Основний контейнер
+        layout = BoxLayout(orientation="vertical", padding="20dp", spacing="20dp")
+
+        # Надпис "Game Screen"
+        lbl_game = Label(text="Game Screen", font_size="40sp")
+        layout.add_widget(lbl_game)
+
+        # Кнопка повернення
+        btn_back = Button(text="Back to Menu", size_hint=(1, 0.2), font_size="20sp")
+        btn_back.bind(on_press=self.go_menu)
+        layout.add_widget(btn_back)
+
+        self.add_widget(layout)
+
+    # Повернення до меню
+    def go_menu(self, *args):
+        self.manager.current = "menu"
+
+
+class Settings(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        # Основний контейнер
+        layout = BoxLayout(orientation="vertical", padding="20dp", spacing="20dp")
+
+        # Заголовок
+        lbl_settings = Label(text="Settings", font_size="40sp")
+        layout.add_widget(lbl_settings)
+
+        # Кнопка повернення
+        btn_back = Button(text="Back to Menu", size_hint=(1, 0.2), font_size="20sp")
+        btn_back.bind(on_press=self.go_menu)
+        layout.add_widget(btn_back)
+
+        self.add_widget(layout)
+
+    # Повернення до меню
+    def go_menu(self, *args):
+        self.manager.current = "menu"
+
+
+class MediumApp(App):
+    def build(self):
+        sm = ScreenManager()
+        sm.add_widget(Menu(name="menu"))
+        sm.add_widget(Game(name="game"))
+        sm.add_widget(Settings(name="settings"))
+        return sm
+
+
+app = MediumApp()
+app.run()
