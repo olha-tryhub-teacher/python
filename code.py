@@ -1,86 +1,32 @@
-from turtle import Turtle, done, ht
-from random import randint
+
+# 4. Клас кнопки дії (успадковує базову кнопку)
+class ActionButton(Button):
+    def __init__(self, x, y, col, name, action_func):
+        # Викликаємо ініціалізацію базової кнопки
+        super().__init__(x, y, "square", col, name)
+
+        self.action_func = action_func
+        self.onclick(self.do_action)
+
+    def do_action(self, x, y):
+        self.action_func()
 
 
-# 1. Функція для малювання ігрового поля
-def draw_field():
-    t = Turtle()
-    t.ht()
-    t.speed(0)
-    t.color("gold")
-    t.width(10)
-    t.pu()
-    t.goto(-150, -100)
-    t.pd()
-    for _ in range(2):
-        t.fd(300)
-        t.lt(90)
-        t.fd(200)
-        t.lt(90)
+# === ОСНОВНА ПРОГРАМА ===
 
+pen = Pen()
 
-# 2. Клас для створення напису-позначки (успадковує Turtle)
-class Label(Turtle):
-    def __init__(self, x, y):
-        super().__init__()
-        self.ht()
-        self.pu()
-        self.color("violet")
-        self.goto(x, y)
+sidebar_x = -250  # Координата X для всієї бічної панелі (зліва)
 
-    def update_text(self, count):
-        self.clear()
-        self.write(f"In rect {count} turtle", font=("Arial", 16))
-
-
-# 3. Клас для черепашок, які можна перетягувати (успадковує Turtle)
-class DragTurtle(Turtle):
-    def __init__(self, x, y, col):
-        super().__init__()
-        self.shape("circle")
-        self.speed(0)
-        self.color(col)
-        self.pu()
-        self.goto(x, y)
-
-        # Прив'язуємо подію перетягування до методу
-        self.ondrag(self.on_drag)
-
-    def on_drag(self, x, y):
-        self.goto(x, y)
-        check_turtles()  # Оновлюємо лічильник при кожному русі
-
-
-# 4. Функція перевірки кількості черепашок у прямокутнику
-def check_turtles():
-    count = 0
-    for t in turtles:
-        # Перевіряємо координати відносно центру
-        if abs(t.xcor()) < 150 and abs(t.ycor()) < 100:
-            count += 1
-
-    label.update_text(count)
-
-
-# --- ОСНОВНА ЧАСТИНА ПРОГРАМИ ---
-
-ht()  # Ховаємо стандартну черепашку
-draw_field()
-
-# Створюємо об'єкт напису
-label = Label(-150, -125)
-
-# Створюємо черепашок і додаємо їх у список
-turtles = []
-colors = ["red", "blue", "purple", "orange"]
-
-for col in colors:
-    # Зверніть увагу: я змінив randint(-150, -150) на randint(-150, 150),
-    # щоб черепашки з'являлися у випадкових місцях по висоті.
-    t = DragTurtle(randint(-200, 200), randint(-150, 150), col)
-    turtles.append(t)
-
-# Робимо першу перевірку одразу після появи черепашок
-check_turtles()
+# Створюємо кнопки кольорів
+ColorButton(sidebar_x, 200, "black", "Чорний", pen)
+ColorButton(sidebar_x, 160, "red", "Червоний", pen)
+ColorButton(sidebar_x, 120, "blue", "Синій", pen)
+ColorButton(sidebar_x, 80, "green", "Зелений", pen)
+ColorButton(sidebar_x, 40, "orange", "Помаранчевий", pen)
+# Створюємо кнопки дій
+ActionButton(sidebar_x, 0, "darkgrey", "Товстіше", pen.increase_width)
+ActionButton(sidebar_x, -40, "lightgrey", "Тонше", pen.decrease_width)
+ActionButton(sidebar_x, -80, "red", "Очистити", pen.clear)
 
 done()
