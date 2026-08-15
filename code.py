@@ -1,106 +1,86 @@
-from turtle import Screen, Turtle, done
-from random import randint, choice
+from turtle import Turtle, done, ht
+from random import randint
 
-# 1. Клас гравця
-class Player(Turtle):
-    def __init__(self):
+
+# 1. Функція для малювання ігрового поля
+def draw_field():
+    t = Turtle()
+    t.ht()
+    t.speed(0)
+    t.color("gold")
+    t.width(10)
+    t.pu()
+    t.goto(-150, -100)
+    t.pd()
+    for _ in range(2):
+        t.fd(300)
+        t.lt(90)
+        t.fd(200)
+        t.lt(90)
+
+
+# 2. Клас для створення напису-позначки (успадковує Turtle)
+class Label(Turtle):
+    def __init__(self, x, y):
         super().__init__()
-        self.shape("square")
+        self.ht()
+        self.pu()
         self.color("violet")
-        self.penup()
-        self.goto(0, -130)
+        self.goto(x, y)
 
-    def move_l(self):
-        if self.xcor() > -130:
-            self.setx(self.xcor() - 15)
+    def update_text(self, count):
+        self.clear()
+        self.write(f"In rect {count} turtle", font=("Arial", 16))
 
-    def move_r(self):
-        if self.xcor() < 130:
-            self.setx(self.xcor() + 15)
 
-# 2. Клас яблука
-class Apple(Turtle):
-    def __init__(self):
+# 3. Клас для черепашок, які можна перетягувати (успадковує Turtle)
+class DragTurtle(Turtle):
+    def __init__(self, x, y, col):
         super().__init__()
         self.shape("circle")
-        self.penup()
-        self.color(choice(["red", "gold", "blue"]))
-        self.goto(randint(-130, 130), 150)
+        self.speed(0)
+        self.color(col)
+        self.pu()
+        self.goto(x, y)
 
-    def fall(self):
-        self.sety(self.ycor() - 5)
+        # Прив'язуємо подію перетягування до методу
+        self.ondrag(self.on_drag)
 
-# 3. Налаштування екрана
-screen = Screen()
-screen.bgcolor("black")
+    def on_drag(self, x, y):
+        self.goto(x, y)
+        check_turtles()  # Оновлюємо лічильник при кожному русі
 
-# Малюємо біле поле за допомогою циклу (працює в усіх браузерах)
-pole = Turtle()
-pole.hideturtle()
-pole.color("white")
-pole.penup()
-pole.goto(-150, 150)
-pole.begin_fill()
-for _ in range(4):
-    pole.forward(300)
-    pole.right(90)
-pole.end_fill()
 
-player = Player()
-screen.listen()
-screen.onkey(player.move_l, "Left")
-screen.onkey(player.move_r, "Right")
+# 4. Функція перевірки кількості черепашок у прямокутнику
+def check_turtles():
+    count = 0
+    for t in turtles:
+        # Перевіряємо координати відносно центру
+        if abs(t.xcor()) < 150 and abs(t.ycor()) < 100:
+            count += 1
 
-# Лічильники та текст
-score = {"catch": 0, "miss": 0}
-writer = Turtle()
-writer.hideturtle()
-writer.color("white")
-writer.penup()
+    label.update_text(count)
 
-def update_score():
-    writer.clear()
-    writer.goto(-140, 160)
-    writer.write(f"Miss: {score['miss']}  Catch: {score['catch']}", font=("Arial", 16, "normal"))
 
-update_score()
-apples = []
+# --- ОСНОВНА ЧАСТИНА ПРОГРАМИ ---
 
-# 4. Ігровий цикл
-def game_loop():
-    if randint(1, 25) == 1:
-        apples.append(Apple())
+ht()  # Ховаємо стандартну черепашку
+draw_field()
 
-    for apple in apples[:]:
-        apple.fall()
+# Створюємо об'єкт напису
+label = Label(-150, -125)
 
-        # Спіймано
-        if apple.distance(player) < 20:
-            apple.hideturtle()
-            apples.remove(apple)
-            score["catch"] += 1
-            update_score()
+# Створюємо черепашок і додаємо їх у список
+turtles = []
+colors = ["red", "blue", "purple", "orange"]
 
-        # Впало за межі
-        elif apple.ycor() < -150:
-            apple.hideturtle()
-            apples.remove(apple)
-            score["miss"] += 1
-            update_score()
+for col in colors:
+    # Зверніть увагу: я змінив randint(-150, -150) на randint(-150, 150),
+    # щоб черепашки з'являлися у випадкових місцях по висоті.
+    t = DragTurtle(randint(-200, 200), randint(-150, 150), col)
+    turtles.append(t)
 
-    # Перевірка кінця гри
-    if score["miss"] >= 3:
-        writer.goto(-60, 0)
-        writer.write("You lose", font=("Arial", 20, "bold"))
-    elif score["catch"] >= 10:
-        writer.goto(-50, 0)
-        writer.write("You win", font=("Arial", 20, "bold"))
-    else:
-        screen.ontimer(game_loop, 30)
-
-game_loop()
+# Робимо першу перевірку одразу після появи черепашок
+check_turtles()
 
 done()
-
-
-
