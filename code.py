@@ -1,81 +1,23 @@
-from turtle import Turtle, done, ht
+class Book():
+    def __init__(self, name, pages):
+        self.name = name
+        self.pages = pages
+        self.current_page = 1
 
-ht()  # Ховаємо базову черепашку
+    def set_current_page(self, new_current_page):
+        if new_current_page <= self.pages:
+            self.current_page = new_current_page
+        else:
+            print(f"Номер сторінки занадто великий! Всього у книжці {self.pages} сторінок!")
 
-
-# 1. Клас Пера
-class Pen(Turtle):
-    def __init__(self):
-        super().__init__()
-        self.shape("turtle")
-        self.speed(0)
-        self.color("black")
-        self.width(2)
-        self.ondrag(self.goto)
-
-    def increase_width(self):
-        self.width(self.width() + 2)
-
-    def decrease_width(self):
-        if self.width() > 2:
-            self.width(self.width() - 2)
+    def get_current_page(self):
+        print(f"Зараз ми на {self.current_page} сторінці")
 
 
-# 2. БАЗОВИЙ КЛАС для будь-якої кнопки на панелі
-class Button(Turtle):
-    def __init__(self, x, y, shape, col, name):
-        super().__init__()
-        self.pu()
-        self.speed(0)
-        self.shape(shape)
-        self.color(col)
-        # Спершу йдемо трохи правіше і пишемо текст
-        self.goto(x + 15, y - 8)
-        self.write(name, font=("Arial", 12, "normal"))
-        # Потім повертаємося на місце самої кнопки
-        self.goto(x, y)
+b1 = Book("title", 555)
 
 
-# 3. Клас кнопки кольору (успадковує базову кнопку)
-class ColorButton(Button):
-    def __init__(self, x, y, col, name, pen_object):
-        # Викликаємо ініціалізацію базової кнопки
-        super().__init__(x, y, "circle", col, name)
-        self.pen = pen_object
-        self.onclick(self.change_color)
-
-    def change_color(self, x, y):
-        self.pen.color(self.fillcolor())
-
-
-# 4. Клас кнопки дії (успадковує базову кнопку)
-class ActionButton(Button):
-    def __init__(self, x, y, col, name, action_func):
-        # Викликаємо ініціалізацію базової кнопки
-        super().__init__(x, y, "square", col, name)
-
-        self.action_func = action_func
-        self.onclick(self.do_action)
-
-    def do_action(self, x, y):
-        self.action_func()
-
-
-# === ОСНОВНА ПРОГРАМА ===
-
-pen = Pen()
-
-sidebar_x = -250  # Координата X для всієї бічної панелі (зліва)
-
-# Створюємо кнопки кольорів
-ColorButton(sidebar_x, 200, "black", "Чорний", pen)
-ColorButton(sidebar_x, 160, "red", "Червоний", pen)
-ColorButton(sidebar_x, 120, "blue", "Синій", pen)
-ColorButton(sidebar_x, 80, "green", "Зелений", pen)
-ColorButton(sidebar_x, 40, "orange", "Помаранчевий", pen)
-# Створюємо кнопки дій
-ActionButton(sidebar_x, 0, "darkgrey", "Товстіше", pen.increase_width)
-ActionButton(sidebar_x, -40, "lightgrey", "Тонше", pen.decrease_width)
-ActionButton(sidebar_x, -80, "red", "Очистити", pen.clear)
-
-done()
+b1.get_current_page()
+b1.set_current_page(666)
+b1.set_current_page(23)
+b1.get_current_page()
