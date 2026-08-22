@@ -1,58 +1,86 @@
-from pygame import *   
-import sounddevice as sd 
+from turtle import Turtle, done, ht
+from random import randint
 
-# === Налаштування ===
-fs = 44100     # Частота дискретизації (кількість вимірів за секунду)
-chunk = 1024 # Кількість семплів (відліків) за один кадр
-width, height = 800, 400  
 
-init()
-screen = display.set_mode((width, height))
-display.set_caption("Live Audio (Mic)")
-clock = time.Clock()
+# 1. Функція для малювання ігрового поля
+def draw_field():
+    t = Turtle()
+    t.ht()
+    t.speed(0)
+    t.color("gold")
+    t.width(10)
+    t.pu()
+    t.goto(-150, -100)
+    t.pd()
+    for _ in range(2):
+        t.fd(300)
+        t.lt(90)
+        t.fd(200)
+        t.lt(90)
 
-# Початкові дані — масив нулів (ще немає звуку)
-data = [0.0] * chunk
 
-# === Функція, яку викликає sounddevice, коли приходить нова порція звуку ===
-def audio_callback(indata, frames, time_info, status):
-    global data
-    if status:
-        print(status)  # Якщо є помилки або попередження, виводимо їх
-    # Перетворюємо отриманий звук у список і масштабуємо під висоту екрану
-    data = [sample * (height // 2) for sample in indata[:, 0].tolist()]
+# 2. Клас для створення напису-позначки (успадковує Turtle)
+class Label(Turtle):
+    def __init__(self, x, y):
+        super().__init__()
+        self.ht()
+        self.pu()
+        self.color("violet")
+        self.goto(x, y)
 
-# === Запуск потоку з мікрофона ===
-stream = sd.InputStream(
-    callback=audio_callback,  # Функція для отримання аудіо
-    channels=1,               # Один канал (моно)
-    samplerate=fs,             # Частота дискретизації
-    blocksize=chunk,           # Розмір буфера (chunk)
-    dtype='float32'            # Тип даних (числа з плаваючою комою)
-)
-stream.start()
+    def update_text(self, count):
+        self.clear()
+        self.write(f"In rect {count} turtle", font=("Arial", 16))
 
-running = True
-while running:
-    for e in event.get():
-        if e.type == QUIT:
-            running = False
 
-    screen.fill((0, 0, 0))
+# 3. Клас для черепашок, які можна перетягувати (успадковує Turtle)
+class DragTurtle(Turtle):
+    def __init__(self, x, y, col):
+        super().__init__()
+        self.shape("circle")
+        self.speed(0)
+        self.color(col)
+        self.pu()
+        self.goto(x, y)
 
-    # Готуємо список точок для малювання хвилі
-    points = []
-    for i, sample in enumerate(data):
-        x = int(i * width / chunk)          # Позиція X для точки
-        y = int(height / 2 + sample)        # Позиція Y для точки
-        points.append((x, y))               # Додаємо точку в список
+        # Прив'язуємо подію перетягування до методу
+        self.ondrag(self.on_drag)
 
-    # Малюємо лінію по точках, якщо їх більше однієї
-    if len(points) > 1:
-        draw.lines(screen, (0, 255, 0), False, points, 2)
+    def on_drag(self, x, y):
+        self.goto(x, y)
+        check_turtles()  # Оновлюємо лічильник при кожному русі
 
-    display.update()
-    clock.tick(60)
 
-stream.stop()
-quit()
+# 4. Функція перевірки кількості черепашок у прямокутнику
+def check_turtles():
+    count = 0
+    for t in turtles:
+        # Перевіряємо координати відносно центру
+        if abs(t.xcor()) < 150 and abs(t.ycor()) < 100:
+            count += 1
+
+    label.update_text(count)
+
+
+# --- ОСНОВНА ЧАСТИНА ПРОГРАМИ ---
+
+ht()  # Ховаємо стандартну черепашку
+draw_field()
+
+# Створюємо об'єкт напису
+label = Label(-150, -125)
+
+# Створюємо черепашок і додаємо їх у список
+turtles = []
+colors = ["red", "blue", "purple", "orange"]
+
+for col in colors:
+    # Зверніть увагу: я змінив randint(-150, -150) на randint(-150, 150),
+    # щоб черепашки з'являлися у випадкових місцях по висоті.
+    t = DragTurtle(randint(-200, 200), randint(-150, 150), col)
+    turtles.append(t)
+
+# Робимо першу перевірку одразу після появи черепашок
+check_turtles()
+
+done()
