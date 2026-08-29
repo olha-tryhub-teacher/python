@@ -1,23 +1,29 @@
-class Book():
-    def __init__(self, name, pages):
-        self.name = name
-        self.pages = pages
-        self.current_page = 1
+    def draw(self):
+        self.screen.blit(self.bg, (0, 0))
+        for p in self.pipes:
+            self.draw_pipe(p['top'], True)
+            self.draw_pipe(p['bot'])
+        self.screen.blit(self.bird_img, self.bird)
+        txt = self.font.render(str(self.score), True, 'white')
+        self.screen.blit(txt, (WIDTH // 2, 50))
+        if self.lose:
+            msg = self.font.render("GAME OVER - Press 'R'", True, 'red')
+            self.screen.blit(msg, (WIDTH // 2 - 300, HEIGHT // 2))
 
-    def set_current_page(self, new_current_page):
-        if new_current_page <= self.pages:
-            self.current_page = new_current_page
-        else:
-            print(f"Номер сторінки занадто великий! Всього у книжці {self.pages} сторінок!")
+# --- ЗАПУСК ---
+game = Game()
+while True:
+    game.update()
+    game.draw()
+    pg.display.update()
 
-    def get_current_page(self):
-        print(f"Зараз ми на {self.current_page} сторінці")
+    for e in pg.event.get():
+        if e.type == pg.QUIT: 
+            exit()
+        if e.type == pg.KEYDOWN:
+            if e.key == pg.K_SPACE: # Стрибок на пробіл
+                game.jump_action()
+            if e.key == pg.K_r and game.lose: # Перезапуск
+                game.reset()
 
-
-b1 = Book("title", 555)
-
-
-b1.get_current_page()
-b1.set_current_page(666)
-b1.set_current_page(23)
-b1.get_current_page()
+    game.clock.tick(60)
