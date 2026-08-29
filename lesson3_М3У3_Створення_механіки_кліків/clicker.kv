@@ -1,0 +1,106 @@
+#:import from_hex kivy.utils.get_color_from_hex
+#:import colormap kivy.utils.colormap
+
+
+#:set main_color "#F3AF12"
+#:set main_color_dark "#F37C12"
+
+
+# Спільний стиль кнопок меню
+<ButtonMenu@Button>:
+    font_size: "20sp"
+    size_hint: 1, 0.15
+    background_normal: ''
+    background_color: from_hex(main_color)
+    color: 0, 0, 0, 1  # чорний текст
+    on_press:
+        self.background_color = from_hex(main_color_dark)
+    on_release:
+        self.background_color = from_hex(main_color)
+
+
+# <Widget>:
+#     font_name: ''
+
+<MenuScreen>:
+    canvas.before:
+        Color:
+            rgba: colormap['blue']
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: "vertical"
+        padding: "20dp"
+        spacing: "20dp"
+
+        Image:
+            source: "assets/images/img.png"
+            size_hint: 1, 0.5
+
+        Label:
+            text: "Main Menu"
+            font_size: "40sp"
+            size_hint: 1, 0.2
+
+        ButtonMenu:
+            text: "PLAY"
+            on_press: root.go_game()
+
+        ButtonMenu:
+            text: "SETTINGS"
+            on_press: root.go_settings()
+
+        ButtonMenu:
+            text: "EXIT"
+            on_press: root.exit_app()
+
+
+<GameScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: "20dp"
+        spacing: "20dp"
+
+        Label:
+            text: "Game Screen"
+            font_size: "40sp"
+
+        # Ось тут треба додати динамічний текст для рахунку:
+        Label:
+            text: "Очки: " + str(root.score)
+            font_size: "30sp"
+            size_hint: 1, 0.2
+
+        # Вказуємо id: fish для віджета риби
+        Fish:
+            id: fish
+            size_hint: 1, 0.65
+
+        ButtonMenu:
+            text: "Back to Menu"
+            on_press: root.go_menu()
+
+        # Вказуємо id: level_complete для напису перемоги
+        Label:
+            id: level_complete
+            text: "LEVEL COMPLETE!"
+            font_size: "35sp"
+            color: 0, 1, 0, 1
+            opacity: 0
+
+
+<SettingsScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: "20dp"
+        spacing: "20dp"
+
+        Label:
+            text: "Settings"
+            font_size: "40sp"
+
+        ButtonMenu:
+            text: "Back to Menu"
+            on_press: root.go_menu()
