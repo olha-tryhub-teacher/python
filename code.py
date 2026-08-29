@@ -7,3 +7,4 @@ plan_house = [
     data_toilet,
     data_bath,
     data_kitchen
+]
