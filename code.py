@@ -1,34 +1,43 @@
-# --- Створення об'єктів гри ---
-enemy1 = Enemy(200, 100, "red", "square", 30)
-enemy2 = Enemy(-200, -100, "red", "square", 30)
-player = Player(0, -180, "navy", "turtle", 10)
-finish = Sprite(0, 180, "gold", "triangle")
+# --- Клас гравця (керується з клавіатури) ---
+class Player(Sprite):
+    def __init__(self, x, y, col, sh, step_size):
+        super().__init__(x, y, col, sh)
+        self.step_size = step_size
 
 
-# --- Основна ігрова функція (цикл) ---
-def game():
-    # Рух ворогів
-    enemy1.move()
-    enemy2.move()
+        # Прив'язка клавіш до функцій руху
+        screen.onkey(self.move_left, "Left")
+        screen.onkey(self.move_right, "Right")
+        screen.onkey(self.move_down, "Down")
+        screen.onkey(self.move_up, "Up")
+        screen.listen()
 
 
-    # Перевірка програшу
-    if player.touch_t(enemy1) or player.touch_t(enemy2):
-        player.write_end("I am loose 😭😭😭")
-        return
+    # Рух вліво
+    def move_left(self):
+        self.setheading(180)
+        self.forward(self.step_size)
 
 
-    # Перевірка виграшу
-    if player.touch_t(finish):
-        player.write_end("I am wiin 😁😁😁")
-        return
+    # Рух вправо
+    def move_right(self):
+        self.setheading(0)
+        self.forward(self.step_size)
 
 
-    # Повторний запуск функції через 100 мс (таймер)
-    screen.ontimer(game, 100)
+    # Рух вгору
+    def move_up(self):
+        self.setheading(90)
+        self.forward(self.step_size)
 
 
-# --- Запуск гри ---
-game()
+    # Рух вниз
+    def move_down(self):
+        self.setheading(270)
+        self.forward(self.step_size)
 
-done()
+
+    # Виведення повідомлення про завершення гри
+    def write_end(self, txt):
+        self.go_to(-150, 0)
+        self.write(txt, font=("Arial", 30))
