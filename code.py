@@ -1,22 +1,21 @@
-class Human:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-        
-    def info(self):
-        print("Name:", self.name)
-        print("Age:", self.age)
+# --- Базовий клас для всіх спрайтів ---
+class Sprite(Turtle):
+    def __init__(self, x, y, col, sh):
+        super().__init__()
+        # t = Turtle()
+        self.color(col)
+        self.shape(sh)
+        self.go_to(x, y)
 
 
-class Pupil(Human):
-    def __init__(self, name, age, mark):
-        super().__init__(name, age)
-        self.mark = mark
-    
-    def info(self):
-        super().info()
-        print("Mark:", self.mark)
-        
+    # Переміщення спрайта без малювання
+    def go_to(self, x, y):
+        self.penup()
+        self.goto(x, y)
 
-h1 = Human("OptimusPrime", 10)
-h1.info()
+
+    # Перевірка зіткнення з іншим об’єктом
+    def touch_t(self, t):
+        if abs(self.xcor() - t.xcor()) < 20 and abs(self.ycor() - t.ycor()) < 20:
+            return True
+        return False
