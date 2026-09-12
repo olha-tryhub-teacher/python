@@ -1,43 +1,54 @@
-# --- Клас гравця (керується з клавіатури) ---
-class Player(Sprite):
-    def __init__(self, x, y, col, sh, step_size):
-        super().__init__(x, y, col, sh)
-        self.step_size = step_size
+import turtle as t
+from time import sleep
 
 
-        # Прив'язка клавіш до функцій руху
-        screen.onkey(self.move_left, "Left")
-        screen.onkey(self.move_right, "Right")
-        screen.onkey(self.move_down, "Down")
-        screen.onkey(self.move_up, "Up")
-        screen.listen()
-
-
-    # Рух вліво
-    def move_left(self):
-        self.setheading(180)
-        self.forward(self.step_size)
-
-
-    # Рух вправо
-    def move_right(self):
-        self.setheading(0)
-        self.forward(self.step_size)
-
-
-    # Рух вгору
-    def move_up(self):
-        self.setheading(90)
-        self.forward(self.step_size)
-
-
-    # Рух вниз
-    def move_down(self):
-        self.setheading(270)
-        self.forward(self.step_size)
-
-
-    # Виведення повідомлення про завершення гри
-    def write_end(self, txt):
-        self.go_to(-150, 0)
-        self.write(txt, font=("Arial", 30))
+LEVELS = [
+    [
+        (-80, -120, -200, 0, "Сідней", True),
+        (-80, 120, 0, 0, "Берлін", False),
+        (80, 120, 0, 0, "Рим", False),
+        (80, -120, 0, 0, "Київ", False),
+    ],
+    [
+        (-80, 120, 0, 0, "Атлантичний", False),
+        (200, 0, 120, -120, "Китайський", True),
+        (80, 120, 0, 0, "Індійський", False),
+        (80, -120, 0, 0, "Тихий", False),
+    ],
+    [
+        (-200, 120, 0, 0, "Python", False),
+        (100, 120, 0, 0, "C++", False),
+        (0, 0, 0, 200, "Mouse", True),
+        (0, -120, 0, 0, "JavaAcript", False),
+    ],
+    [
+        (-80, 120, 0, 0, "Cat", False),
+        (80, 120, 0, 0, "Dog", False),
+        (0, -120, 0, 0, "Mouse", False),
+        (0, 200, 160, 40, "Shark", True),
+    ],
+    [
+        (120, -120, -80, -120, "Head", True),
+        (-120, -120, 0, 0, "CPU", False),
+        (0, 0, 0, 0, "SSD", False),
+        (150, 0, 0, 0, "RAM", False),
+    ],
+    [
+        (-80, 120, 0, 0, "Red", False),
+        (-120, 40, 0, 200, "Brawl", True),
+        (80, 120, 0, 0, "Green", False),
+        (100, 0, 0, 0, "Blue", False),
+    ],
+    [
+        (-80, 120, 0, 0, "Train", False),
+        (80, 120, 0, 0, "Car", False),
+        (-200, 0, 200, 0, "Seat", True),
+        (120, 0, 0, 0, "Rocket", False),
+    ],
+    [
+        (-80, 120, 0, 0, "One", False),
+        (80, 120, 0, 0, "Two", False),
+        (80, -120, 0, 0, "Three", False),
+        (160, 40, -120, 40, "Minus", True),
+    ],
+]
