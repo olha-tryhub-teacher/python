@@ -1,51 +1,34 @@
-<MainScreen>:
-    MDBoxLayout: 
-        orientation: "vertical"     
-        padding: "50dp" 
-        spacing: "30dp"
+# [ЗМІНА] Створено інтерфейс кнопок керування внизу екрана
+            BoxLayout:
+                size_hint: 1, None
+                height: dp(100)
+                padding: dp(20)
+                spacing: dp(20)
 
-        MDIconButton:
-            icon: "cog"
-            pos_hint: {"right": 1, "top": 1}
-            icon_size: "50dp"
+                # Кнопка ВЛІВО
+                MDIconButton:
+                    icon: "arrow-left-bold"
+                    icon_size: "50dp"
+                    # При натисканні змінюємо стан у словнику на True, при відпусканні - на False
+                    on_press: root.keys["left"] = True
+                    on_release: root.keys["left"] = False
 
-        MDLabel:
-            text: "SHOOTER"
-            halign: "center"
-            font_size: "60sp"
+                # Кнопка ВПРАВО
+                MDIconButton:
+                    icon: "arrow-right-bold"
+                    icon_size: "50dp"
+                    on_press: root.keys["right"] = True
+                    on_release: root.keys["right"] = False
 
-        Image:
-            source: "assets/images/rocket.png"
-            size_hint_y: 0.7
-            allow_stretch: True
+                # Пустий віджет, щоб розділити стрілки і кнопку пострілу
+                Widget:
 
-
-        MDButton:
-            pos_hint: {"center_x": 0.5, "center_y": 0.5}
-            on_press:
-                root.manager.current = "game"
-
-            MDButtonText:
-                text: "PLAY"
-                font_size: "80sp"
-
-
-<Ship@Image>:
-    source: "assets/images/rocket.png"
-    size_hint: None, None
-    size: dp(100), dp(300)
-
-<GameScreen>:
-    FloatLayout:
-        FloatLayout:
-            id: game
-            FloatLayout:
-                id: back
-            FloatLayout:
-                id: front
-                Ship:  
-                    id: ship
-                    center: root.center       
-
-        FloatLayout:
-            id: interface
+                # Кнопка ВОГОНЬ
+                MDIconButton:
+                    icon: "fire"
+                    icon_size: "50dp"
+                    # Використовуємо червоний колір для кнопки пострілу, що відповідає темі
+                    theme_icon_color: "Custom"
+                    icon_color: 1, 0, 0, 1
+                    # Одразу викликаємо метод стрільби
+                    on_press: root.fire()
