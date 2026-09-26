@@ -1,51 +1,51 @@
-# ваш код
-from turtle import *
-from random import randint
+<MainScreen>:
+    MDBoxLayout: 
+        orientation: "vertical"     
+        padding: "50dp" 
+        spacing: "30dp"
+
+        MDIconButton:
+            icon: "cog"
+            pos_hint: {"right": 1, "top": 1}
+            icon_size: "50dp"
+
+        MDLabel:
+            text: "SHOOTER"
+            halign: "center"
+            font_size: "60sp"
+
+        Image:
+            source: "assets/images/rocket.png"
+            size_hint_y: 0.7
+            allow_stretch: True
 
 
-def create_turtle(x, y, sh, col):
-    t = Turtle()
-    t.pu()
-    t.goto(x, y)
-    t.width(10)
-    t.shape(sh)
-    t.color(col)
-    return t
+        MDButton:
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            on_press:
+                root.manager.current = "game"
+
+            MDButtonText:
+                text: "PLAY"
+                font_size: "80sp"
 
 
-# побудувати трасу, де є старт та фініш
-def track():
-    tr = create_turtle(-150, -150, "triangle", "green")
-    tr.setheading(90)
-    tr.pendown()
-    tr.forward(300)
-    tr.color("red")
-    tr.width(20)
-    tr.penup()
-    tr.goto(300, -150)
-    tr.pendown()
-    tr.forward(300)
+<Ship@Image>:
+    source: "assets/images/rocket.png"
+    size_hint: None, None
+    size: dp(100), dp(300)
 
+<GameScreen>:
+    FloatLayout:
+        FloatLayout:
+            id: game
+            FloatLayout:
+                id: back
+            FloatLayout:
+                id: front
+                Ship:  
+                    id: ship
+                    center: root.center       
 
-def win(t):
-    t.write("i am a winner!")
-
-
-# створити черепашок
-t1 = create_turtle(-150, 70, "turtle", "purple")
-t2 = create_turtle(-150, -70, "turtle", "orange")
-
-track()
-
-# створити ігровий цикл, де черепашки будуть змагатись
-while t1.xcor() < 300 and t2.xcor() < 300:
-    t1.forward(randint(1, 7)) # 7
-    t2.forward(randint(1, 7)) # 1
-
-
-if t1.xcor() > t2.xcor(): #305, 301
-    win(t1)
-else:
-    win(t2)
-
-done()
+        FloatLayout:
+            id: interface
