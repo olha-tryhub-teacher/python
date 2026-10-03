@@ -1,26 +1,27 @@
-        # [ЗМІНА] Оновлення стану головного корабля через його власний метод
-        self.ids.ship.move(self.keys, Window.width)
+# клас для об'єктів-спрайтів
+class Sprite:
+    def __init__(self, coord, color):
+        self.image = pygame.Surface((100, 100))
+        self.image.fill(color)
+        self.rect = pygame.Rect(coord, (100, 100))
+        self.dx = 5
 
-        # [ЗМІНА] Таймер спавну ворогів
-        self.spawn_timer += dt  # Додаємо час, що пройшов з минулого кадру
-        if self.spawn_timer > self.spawn_delay:
-            self.spawn_enemy()  # Створюємо ворога
-            self.spawn_timer = 0  # Скидаємо таймер на нуль
-            self.spawn_delay = random.uniform(1.0, 3.0)  # Робимо наступний спавн випадковим (від 1 до 3 сек)
+    def update(self):
+        self.rect.centerx += self.dx
+        if self.rect.right > 500:
+            self.dx = -5  # змінити напрямок руху вліво
+        elif self.rect.left < 0:
+            self.dx = 5   # змінити напрямок руху вправо
 
-        # [ЗМІНА] Оновлення ворогів
-        for enemy in self.enemies[:]:
-            enemy.move()
 
-            # Викликаємо метод стрільби ворожого корабля
-            if time.time() - enemy.last_shot > enemy.fire_rate:
-                # Отримуємо кулю від ворога
-                new_bullet = enemy.fire()
-                self.ids.front.add_widget(new_bullet)
-                self.bullets.append(new_bullet)
+    def draw(self, surface):
+        # відображення зображення (image) на екрані
+        surface.blit(self.image, (self.rect.x, self.rect.y))
 
-                enemy.last_shot = time.time()
 
-            if enemy.top < 0:
-                self.ids.front.remove_widget(enemy)
-                self.enemies.remove(enemy)
+# створення списку ігрових об'єктів-спрайтів з різними кольорами та координатами
+sprites = [
+    Sprite((100, 100), RED),
+    Sprite((200, 150), GREEN),
+    Sprite((300, 250), BLUE)
+]
