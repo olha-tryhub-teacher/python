@@ -1,27 +1,17 @@
-# клас для об'єктів-спрайтів
-class Sprite:
-    def __init__(self, coord, color):
-        self.image = pygame.Surface((100, 100))
-        self.image.fill(color)
-        self.rect = pygame.Rect(coord, (100, 100))
-        self.dx = 5
+    def on_enter(self, *args):
+        # [ЗМІНА] Очищення сцени від старих куль та ворогів перед новою грою
+        for enemy in self.enemies:
+            self.ids.front.remove_widget(enemy)
+        self.enemies.clear()
 
-    def update(self):
-        self.rect.centerx += self.dx
-        if self.rect.right > 500:
-            self.dx = -5  # змінити напрямок руху вліво
-        elif self.rect.left < 0:
-            self.dx = 5   # змінити напрямок руху вправо
+        for bullet in self.bullets:
+            self.ids.front.remove_widget(bullet)
+        self.bullets.clear()
 
+        self.ids.ship.center_x = Window.width / 2
+        self.keys = {"left": False, "right": False, "fire": False}
+        self.spawn_timer = 0
 
-    def draw(self, surface):
-        # відображення зображення (image) на екрані
-        surface.blit(self.image, (self.rect.x, self.rect.y))
-
-
-# створення списку ігрових об'єктів-спрайтів з різними кольорами та координатами
-sprites = [
-    Sprite((100, 100), RED),
-    Sprite((200, 150), GREEN),
-    Sprite((300, 250), BLUE)
-]
+        # це вже було
+        self.spawn_enemy()
+        self.game_event = Clock.schedule_interval(self.update, 1 / self.fps)
