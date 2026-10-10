@@ -1,44 +1,98 @@
-    # [ЗМІНА] Окремий метод для перевірки всіх зіткнень
-    def check_collisions(self):
-        # 1. Перевірка зіткнення корабля гравця з ворогами
-        for enemy in self.enemies[:]:
-            # collide_widget перевіряє, чи накладаються координати двох віджетів
-            if self.ids.ship.collide_widget(enemy):
-                self.game_over()
-                return  # Якщо гра завершена, далі не перевіряємо
+import pygame
+from random import randint
 
-        # 2. Перевірка колізій куль
-        for bullet in self.bullets[:]:
-            # Якщо це куля гравця
-            if bullet.owner == "player":
-                for enemy in self.enemies[:]:
-                    if bullet.collide_widget(enemy):
-                        # Куля потрапила у ворога: видаляємо ворога та кулю
-                        self.ids.front.remove_widget(enemy)
-                        if enemy in self.enemies:
-                            self.enemies.remove(enemy)
-                        self.remove_bullet(bullet)
-                        break  # Кулю знищено, виходимо з внутрішнього циклу
+# Налаштування Pygame
+pygame.init()
+WIDTH, HEIGHT = 500, 500
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+clock = pygame.time.Clock()
 
-            # Якщо це куля ворога
-            elif bullet.owner == "enemy":
-                if bullet.collide_widget(self.ids.ship):
-                    # Куля потрапила в гравця: гра завершується
-                    self.remove_bullet(bullet)
-                    self.game_over()
-                    return
+# Кольори та константи
+WHITE = (255, 255, 255)
+FPS = 50
+SPEED = 5
 
-    # [ЗМІНА] Окремий метод для безпечного видалення кулі
-    def remove_bullet(self, bullet):
-        if bullet in self.bullets:
-            self.ids.front.remove_widget(bullet)
-            self.bullets.remove(bullet)
 
-    # [ЗМІНА] Окремий метод для логіки програшу
-    def game_over(self):
-        # Зупиняємо таймер гри
-        if self.game_event:
-            self.game_event.cancel()
-            self.game_event = None
-        # Перекидаємо на екран програшу
-        self.manager.current = "game_over"
+# --- КЛАС ДИНОЗАВРА ---
+class Dino:
+    def __init__(self):
+        self.x = 100
+        self.y = 380
+        self.max_y = 380
+        self.velocity = 0
+        self.gravity = 0.7
+        self.is_jumping = False
+
+        # Анімація
+        self.run_images = [
+            pygame.image.load("DinoRun1.png"),
+            pygame.image.load("DinoRun2.png")
+        ]
+        self.jump_image = pygame.image.load("DinoJump.png")
+        self.current_img = self.run_images[0]
+
+        self.frame = 0
+        self.anim_timer = 0
+
+    def jump(self):
+        if not self.is_jumping:
+            self.velocity = 15
+            self.is_jumping = True
+
+    def update(self):
+        # Фізика
+        if self.is_jumping:
+            self.y -= self.velocity
+            self.velocity -= self.gravity
+            if self.y >= self.max_y:
+                self.y = self.max_y
+                self.is_jumping = False
+
+        # Анімація
+        if self.is_jumping:
+            self.current_img = self.jump_image
+        else:
+            self.anim_timer += 1
+            if self.anim_timer >= 5:
+                self.frame = (self.frame + 1) % 2
+                self.anim_timer = 0
+            self.current_img = self.run_images[self.frame]
+
+    def draw(self, screen):
+        screen.blit(self.current_img, (self.x, self.y))
+
+    def get_rect(self):
+        return pygame.Rect(self.x, self.y, self.current_img.get_width(), self.current_img.get_height())
+
+
+
+
+# --- СТВОРЕННЯ ГРАВЦЯ ТА ПЕРЕШКОДИ ---
+player = Dino()
+
+running = True
+
+# --- ГОЛОВНИЙ ІГРОВИЙ ЦИКЛ ---
+while running:
+    # 1. Обробка подій
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # 2. Керування
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_SPACE]:
+        player.jump()
+
+    # 3. Оновлення логіки (Тепер дуже просто!)
+    player.update()
+
+
+        # 5. Малювання
+    screen.fill(WHITE)
+    player.draw(screen)
+
+    pygame.display.flip()
+    clock.tick(FPS)
+
+pygame.quit()
