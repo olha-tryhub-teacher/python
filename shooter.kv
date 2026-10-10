@@ -29,10 +29,17 @@
                 font_size: "80sp"
 
 
-<Ship@Image>:
+# [ЗМІНА] Задаємо правила оформлення для корабля гравця
+<PlayerShip>:
     source: "assets/images/rocket.png"
     size_hint: None, None
-    size: dp(100), dp(200) # [ЗМІНА] Зменшено висоту корабля, щоб він виглядав пропорційніше
+    size: dp(100), dp(200)
+
+
+# [ЗМІНА] Задаємо правила оформлення для ворожого корабля
+<EnemyShip>:
+    source: "assets/images/monster.png"
+    size: dp(80), dp(70)
 
 
 <GameScreen>:
@@ -42,7 +49,6 @@
 
             FloatLayout:
                 id: back
-                # [ЗМІНА] Додано фон космосу (найтемніший синій колір)
                 canvas.before:
                     Color:
                         rgba: 0.02, 0.02, 0.08, 1
@@ -52,8 +58,8 @@
 
             FloatLayout:
                 id: front
-                # [ЗМІНА] Корабель переміщено в нижню частину екрана над кнопками
-                Ship:
+                # [ЗМІНА] Використовуємо новий клас PlayerShip для гравця
+                PlayerShip:
                     id: ship
                     center_x: root.center_x
                     y: dp(120)
@@ -61,7 +67,13 @@
         FloatLayout:
             id: interface
 
-            # [ЗМІНА] Створено інтерфейс кнопок керування внизу екрана
+            # [ЗМІНА] Додано кнопку «pause» у правий верхній кут екрана гри
+            MDIconButton:
+                icon: "pause"
+                icon_size: "40dp"
+                pos_hint: {"right": 0.95, "top": 0.95}
+                on_press: root.pause_game()
+
             BoxLayout:
                 size_hint: 1, None
                 height: dp(100)
